@@ -1,5 +1,5 @@
 # project-cat-aclysm
-Currently work in progress, updates coming soon.
+**Currently work in progress, updates coming soon.**
 
 Hello and welcome to my little repository.
 
