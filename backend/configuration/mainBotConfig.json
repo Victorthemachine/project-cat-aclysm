@@ -1,0 +1,9 @@
+{
+    "prefix": "bat!",
+    "token": "Nzc1NjY3MzE1NzA2NTYwNTMz.X6pqew.cTm5t7ouhONtXnIlllgctGiep00",
+    "creator": "393861290373677066",
+    "owners": ["393861290373677066", "435646331537588225"], 
+    "familiar": ["393861290373677066", "435646331537588225", "206166621214081026", "518140135036944434", "219803940902928386"],
+    "defaultPerms": ["ADD_REACTIONS", "VIEW_CHANNEL", "SEND_MESSAGES"],
+    "lyricsToken": "apikey=bhElNUNr7S0tmZHe6hWOnIW2OB5j7kqIgQfquGQXahHOgm61LxT6W7npvIyoF7rM"
+}

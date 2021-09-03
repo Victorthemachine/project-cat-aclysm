@@ -1,0 +1,22 @@
+{
+    "scripts": {
+        "build": "cd ./frontend && yarn build",
+        "start": "cd ./backend && nodemon index",
+        "oldstart": "concurrently \"cd ./backend && nodemon index\" \"cd ./frontend && yarn start\""
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "concurrently": "^6.2.0",
+        "cookie-parser": "^1.4.5",
+        "cors": "^2.8.5",
+        "diff": "^5.0.0",
+        "discord-player": "^4.1.4",
+        "discord.js": "^13.1.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.13.7",
+        "morgan": "^1.10.0",
+        "nanoid": "^3.1.25",
+        "nodemon": "^2.0.12",
+        "react-scripts": "^4.0.3"
+    }
+}
