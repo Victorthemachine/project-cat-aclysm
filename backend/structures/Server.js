@@ -2,10 +2,8 @@ const configuration = require('./../configuration/serverConfig.json');
 const express = require('express');
 const app = express();
 
-const createError = require('http-errors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const cors = require('cors');
 
 const Client = require('./schematics/Client');
@@ -35,10 +33,11 @@ module.exports = class Server {
     constructor(client, options = {}) {
         this.client = client;
         this.server = app;
-        app.post('/verify', (req, res) => this.verifyRoute(req, res));
+        app.post('/verify', (req, res) => this.#verifyRoute(req, res));
+        app.post('/invite', (req, res) => this.#inviteRoute(req, res));
     }
 
-    verifyRoute(req, res) {
+    #verifyRoute(req, res) {
         console.log(req.get('token'));
         console.log(req.body);
         if (req.body.token) {
@@ -53,6 +52,38 @@ module.exports = class Server {
                                 .then(json => {
                                     console.log(json);
                                     res.send(json);
+                                })
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        })
+                } else {
+                    res.send({ message: 'invalid token' });
+                }
+            })
+        } else {
+            res.send({ message: 'invalid token' });
+        }
+    }
+
+    #inviteRoute(req, res) {
+        if (req.body.token) {
+            console.log(req.body)
+            const { body: { token, guildId } } = req;
+            console.log(guildId);
+            Client.verifyToken(token).then(verified => {
+                console.log(verified);
+                if (verified === true) {
+                    Client.findByToken(token)
+                        .then(records => {
+                            const [target] = records;
+                            this.client.utils.fetchInvite(target.discord.userId, guildId)
+                                .then(message => {
+                                    if (Object.keys(message).length > 0 && !message.error) {
+                                        res.send(message);                                        
+                                    } else {
+                                        res.send({ message: 'missing permissions' });
+                                    }
                                 })
                         })
                         .catch(error => {

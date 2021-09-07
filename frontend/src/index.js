@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Landing from './pages/Landing';
 import App from './App';
-import Dashboard from './pages/Dashboard';
+import Controlpanel from './pages/Controlpanel';
 import reportWebVitals from './reportWebVitals';
 import {
   BrowserRouter as Router,
@@ -19,7 +19,7 @@ ReactDOM.render(
         <Route exact path="/">
           <Landing />
         </Route>
-        <Route path="/manager-panel/:token" component={App}>
+        <Route path="/manager-panel/:token" component={Controlpanel}>
         </Route>
       </Switch>
     </Router>

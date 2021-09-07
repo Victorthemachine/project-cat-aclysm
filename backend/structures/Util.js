@@ -321,9 +321,10 @@ module.exports = class Util {
 					const userGuilds = this.client.guilds.cache.filter(guild => {
 						return guild.members.cache.findKey(member => member.id === id)
 					})
-					userGuilds.each(guild => {
-						data.guilds.push({ icon: guild.iconURL(), name: guild.name });
-					})
+					this.canInvite(target, userGuilds)
+						.then(filtered => {
+							data.guilds = this.determinePosition(target, userGuilds, filtered);
+						});
 					console.log(data);
 					resolve(data);
 				})
@@ -335,4 +336,114 @@ module.exports = class Util {
 		})
 	}
 
+	canInvite(user, guildCollection) {
+		return new Promise(resolve => {
+			const filteredGuilds = [];
+			guildCollection.each(guild => {
+				guild.members.fetch(user)
+					.then(targetMember => {
+						filteredGuilds.push({ icon: guild.iconURL(), name: guild.name, id: guild.id, invitable: false });
+						if ((guild.systemChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+							filteredGuilds[filteredGuilds.length - 1].invitable = true;
+						}
+					})
+			});
+			resolve(filteredGuilds);
+		})
+	}
+
+	/**
+	 * Add support for custom tiers in future (specific roles etc.)
+	 * @param {*} user 
+	 * @param {*} guildCollection 
+	 * @param {*} dataToEnrich 
+	 */
+	determinePosition(user, guildCollection, dataToEnrich) {
+		let counter = 0;
+		const shallowCopy = dataToEnrich;
+		console.log('What is this mindfuck of logs');
+		console.log(shallowCopy);
+		guildCollection.each(guild => {
+			let position = 'Member';
+			if (guild.ownerId === user.id) {
+				position = 'Owner'
+			} else {
+				const modPerms = new Set([MANAGE_MESSAGES, MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS, VIEW_AUDIT_LOG, MANAGE_NICKNAMES])
+				guild.members.fetch(user)
+					.then(target => {
+						if (target.permissions.has(ADMINISTRATOR)) {
+							position = 'Admin';
+						} else if (target.permissions.toArray().every(Set.prototype.has, modPerms)) {
+							position = 'Mod'
+						}
+					})
+			}
+			shallowCopy[counter] = Object.assign(shallowCopy[counter], { position: position });
+			counter++;
+		})
+		return shallowCopy;
+	}
+
+	fetchInvite(id, guildId, channelId) {
+		return new Promise(resolve => {
+			if (channelId) {
+				this.client.users.fetch(id)
+					.then(target => {
+						const targetGuild = this.client.guilds.cache.get(guildId);
+						targetGuild.channels.fetch(channelId)
+							.then(targetChannel => {
+								targetGuild.members.fetch(target)
+									.then(targetMember => {
+										if ((targetChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+											targetGuild.invites.create(targetChannel, { maxAge: 0, maxUses: 0 })
+												.then(invite => {
+													resolve({ invite: invite.url })
+												})
+												.catch(error => {
+													console.log('Step three')
+													console.log(error)
+													resolve({ error: 'missing permission' });
+												})
+										}
+									})
+							})
+							.catch(error => {
+								console.log('Step two')
+								console.log(error)
+								resolve({});
+							});
+					})
+					.catch(err => {
+						console.log('Step one')
+						console.error(err);
+						resolve({});
+					})
+			} else {
+				this.client.users.fetch(id)
+					.then(target => {
+						const targetGuild = this.client.guilds.cache.get(guildId);
+						targetGuild.members.fetch(target)
+							.then(targetMember => {
+								if ((targetGuild.systemChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+									targetGuild.invites.create(targetGuild.systemChannel, { maxAge: 0, maxUses: 0 })
+										.then(invite => {
+											resolve({ invite: invite.url })
+										})
+										.catch(error => {
+											console.log('Step three')
+											console.log(error)
+											resolve({ error: 'missing permission' });
+										})
+								}
+							})
+					})
+					.catch(err => {
+						console.log('Step one')
+						console.error(err);
+						resolve({});
+					})
+
+			}
+		});
+	}
 };

@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
-import alt from './components/altimage.jpg';
 import './App.css';
 import CardMedia from '@material-ui/core/CardMedia';
 import axios from 'axios';
 import { Card } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import ServerCard from './components/ServerCard';
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
+
   },
   media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
+    height: 100,
+    width: '33%',
+    marginLeft: '33%'
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -62,9 +64,7 @@ function App({ match }) {
           Learn React
         </a>
       </header>
-      <Card>
-        <CardMedia className={classes.media} image={userInfo && Object.keys(userInfo).length > 0 ? userInfo.user.icon : alt}></CardMedia>
-      </Card>
+      <ServerCard details={match}/>
     </div>
   );
 }

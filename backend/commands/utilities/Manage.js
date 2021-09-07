@@ -28,6 +28,7 @@ module.exports = class extends Command {
             },
             discord: {
                 userId: id,
+                guildId: message.guild.id,
                 supporter: false, //TODO: update this if I get a patreon to pay for this stuff lol
             }
         });

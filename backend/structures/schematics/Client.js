@@ -8,6 +8,7 @@ var clientSchema = new mongoose.Schema({
     },
     discord: {
         userId: String,
+        guildId: String,
         supporter: Boolean,
     }
 }, { timestamps: true });
