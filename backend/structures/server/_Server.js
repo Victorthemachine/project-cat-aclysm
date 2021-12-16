@@ -1,8 +1,10 @@
 const express = require('express');
 const config = require('./../../configuration/serverConfig.json')
-const logger = require('winston');
-
-new class Server {
+const logger = require('../Logger');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+module.exports = class Server {
 
     constructor() {
         const app = express();
@@ -22,7 +24,6 @@ new class Server {
             logger.info(`Server ready, listening at: ${fullAddress}`);
         });
         this.app = app;
-
     }
 
 }

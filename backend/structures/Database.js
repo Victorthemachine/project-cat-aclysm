@@ -19,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/meowzers', {
     }
 });
 
-module.exports = class Database {
+class Database {
 
     isConnected() {
         return new Promise(resolve => {
@@ -37,5 +37,16 @@ module.exports = class Database {
         if (end === false) {
             setTimeout(() => this.awaitConnection(false), 1000);
         }
+    }
+}
+
+
+let instance;
+module.exports = class Singleton {
+    getInstance() {
+        if (!instance) {
+            instance = new Database();
+        }
+        return instance;
     }
 }

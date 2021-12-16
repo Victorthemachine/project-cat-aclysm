@@ -1,12 +1,11 @@
-const winston = require('winston');
+const { createLogger, format, transports, addColors } = require('winston');
 require('winston-daily-rotate-file');
 const { combine, timestamp, printf } = format;
-
 const useFormat = printf(({ level, message, timestamp }) => {
     return `${timestamp}: [${level}] ${message}`;
 });
 
-winston.addColors({
+addColors({
     colors: {
         crit: 'bold red',
         error: 'red',
@@ -16,10 +15,10 @@ winston.addColors({
     }
 });
 
-module.exports = winston.createLogger({
+const logger = createLogger({
     transports: [
-        new winston.transports.Console(),
-        new winston.transports.DailyRotateFile({
+        new transports.Console(),
+        new transports.DailyRotateFile({
             filename: 'nya-bot-%DATE%.log',
             datePattern: 'YYYY-MM-DD-HH',
             zippedArchive: true,
@@ -40,3 +39,4 @@ module.exports = winston.createLogger({
         useFormat
     ),
 });
+module.exports = logger;

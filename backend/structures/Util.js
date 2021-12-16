@@ -14,7 +14,6 @@ const BOT_CONSTANTS = require('./../configuration/botConstants');
 const { Channel } = require('discord.js');
 //=============
 
-let pollIDs = 0;
 const { reactToThis } = Reactions;
 
 module.exports = class Util {
@@ -109,12 +108,6 @@ module.exports = class Util {
 			arr.push(`${len} more....`);
 		}
 		return arr;
-	}
-
-	//TODO: Rewrite poll system completely
-	generatePollID() {
-		pollIDs += 1;
-		return pollIDs;
 	}
 
 	getUserFromMention(mention) {
