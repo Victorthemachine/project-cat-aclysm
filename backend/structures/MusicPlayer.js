@@ -2,19 +2,13 @@ const { Player } = require('discord-player');
 const logger = require('./Logger');
 
 module.exports = class MusicPlayer extends Player {
-    constructor(client, options = {}) {
+    constructor(client, playerOptions, options = {}) {
         //Add option to disable youtube once I understand legal ramifications
         if (!client) {
             throw new Error('Player requires bot client to initialize')
         } else {
-            const player = new Player(client, {
-                "leaveOnEmpty": "true",
-                "leaveOnStop": "false",
-                "leaveOnEmptyCooldown": "5000",
-                "autoSelfDeaf": "true",
-            });
-            this.#initEvents(player);
-            this.playerInstance = player;
+            super(client);
+            this.#initEvents(this);
         }
     }
 
@@ -23,7 +17,7 @@ module.exports = class MusicPlayer extends Player {
      * @param {Player} player 
      */
     #initEvents(player) {
-        player.on('connectionCreate', (queue, audioChannel) => queue.metadata.channel.send(`Hello there ${audioChannel.channel.name}, let\' jam!`))
+        player.on('connectionCreate', (queue, audioChannel) => queue.metadata.channel.send(`Hello there "${audioChannel.channel.name}", let\'s jam!`))
         player.on('connectionError', (queue, error) => {
             logger.error(`[${queue.guild.name}] ${error.message}`);
             queue.metadata.channel.send(`I can\'t join the channel QwQ! Check my permissions please.`)

@@ -16,11 +16,20 @@ module.exports = class extends Command {
     async run(message, args) {
         if (message.member && message.member.voice.channel) {
             try {
-                (this.client.player.createQueue(message.guild)).connect(message.member.voice.channelId);
+                const queue = await this.client.player.createQueue(message.guild, {
+                    metadata: {
+                        channel: message.channel
+                    },
+                    PlayerOptions: {
+                        "leaveOnStop": "false",
+                        "autoSelfDeaf": "true",
+                    }
+                });
+                queue.connect(message.member.voice.channelId);
             } catch (error) {
                 logger.error(error);
                 message.channel.send(`Something went wrong, I can't join your voice channel!`);
-            }   
+            }
         } else {
             return message.channel.send(`Buddy you need to be in a voice channel >~<!`);
         }
