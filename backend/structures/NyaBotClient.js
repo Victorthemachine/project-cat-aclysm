@@ -4,6 +4,7 @@ const Server = require('./server/_Server');
 const Database = require('./Database');
 const DatabaseSingleton = new Database();
 const MusicPlayer = require('./MusicPlayer');
+const MusicUtil = require('./MusicUtil.js');
 //const Logger = require('winston')
 
 module.exports = class NyaBotClient extends Client {
@@ -14,7 +15,23 @@ module.exports = class NyaBotClient extends Client {
                 parse: ['users', 'roles'],
                 repliedUser: true
             },
-            intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING]
+            intents: [
+                Intents.FLAGS.GUILDS,
+                Intents.FLAGS.GUILD_MEMBERS,
+                Intents.FLAGS.GUILD_BANS,
+                Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+                Intents.FLAGS.GUILD_INTEGRATIONS,
+                Intents.FLAGS.GUILD_WEBHOOKS,
+                Intents.FLAGS.GUILD_INVITES,
+                Intents.FLAGS.GUILD_VOICE_STATES,
+                Intents.FLAGS.GUILD_PRESENCES,
+                Intents.FLAGS.GUILD_MESSAGES,
+                Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+                Intents.FLAGS.GUILD_MESSAGE_TYPING,
+                Intents.FLAGS.DIRECT_MESSAGES,
+                Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+                Intents.FLAGS.DIRECT_MESSAGE_TYPING
+            ]
         });
         //this.logger = Logger();
 
@@ -27,6 +44,8 @@ module.exports = class NyaBotClient extends Client {
         this.events = new Collection();
 
         this.utils = new Util(this);
+
+        this.musicUtils = new MusicUtil(this);
 
         this.owners = options.owners;
 
