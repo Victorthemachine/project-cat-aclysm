@@ -1,6 +1,6 @@
 const { VoiceChannel, Collection, MessageEmbed } = require("discord.js");
-const logger = require("./Logger");
-const embedConfig = require('./../configuration/embedConfig.json');
+const logger = require("../Logger");
+const embedConfig = require('./../../configuration/embedConfig.json');
 //TODO: There should be a better solution than two maps
 const channelMap = new Collection();
 const reverseMap = new Collection();
@@ -12,32 +12,27 @@ module.exports = class MusicUtil {
     }
 
     isBotInVoice(channel) {
-        logger.info(`Is channel null: ${typeof channel}`)
-        if (channel) {
-            logger.info(`Is bot in channel: ${channel.members.has(this.client.user.id)}`);
-            if (channel.members.has(this.client.user.id) === true) {
-                logger.info(`Is bot muted: ${(channel.members.get(this.client.user.id)).voice.mute}`)
-                if ((channel.members.get(this.client.user.id)).voice.mute === false) {
-                    return true;
-                }
-            }
+        logger.info(`Is channel null: ${channel === null}`)
+        if (!channel) return false;
+
+        logger.info(`Is bot in channel: ${channel.members.has(this.client.user.id)}`);
+        if (channel.members.has(this.client.user.id) === false) {
+            return false;
+        } else {
+            logger.info(`Is bot muted: ${channel.members.get(this.client.user.id).voice.mute}`)
+            if (channel.members.get(this.client.user.id).voice.mute === true) return false;    
         }
-        return false;
+        return true;
     }
 
     isMemberInVoice({ member, guildId }) {
-        if (member.voice.channel) {
-            if (member.voice.channel.guildId === guildId) {
-                return true;
-            }
-        }
-        return false;
+        if (!member.voice.channel) return false;
+        if (member.voice.channel.guildId !== guildId) return false;
+        return true;
     }
 
     isMemberActive(member) {
-        if (member.voice.deaf === false && member.user.bot === false) {
-            return true;
-        }
+        if (member.voice.deaf === false && member.user.bot === false) return true;
         return false;
     }
 
@@ -49,7 +44,7 @@ module.exports = class MusicUtil {
         })
     }
 
-    killConnection({ channel }, reason) {
+    killConnection(channel, reason) {
         channel.members.get(this.client.user.id).voice.disconnect();
         if (this.client.player.getQueue(channel.guildId)) {
             this.client.player.getQueue(channel.guildId).destroy();
@@ -80,10 +75,12 @@ module.exports = class MusicUtil {
 
     }
 
-    wasDisconnected({ channel }) {
+    wasDisconnected(channel) {
         //Try catch, might have gotten kicked
         try {
-            channelMap.get(channel.id).send('Well that was rude! No need to boot me out like that >~<!');
+            this.client.channels.fetch(channelMap.get(channel.id)).then(chann => {
+                chann.send('Well that was rude! No need to boot me out like that >~<!');
+            })
         } catch {
             logger.info(`Kicked out of ${channel.guild.name} during music playback`);
         }

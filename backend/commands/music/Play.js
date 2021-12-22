@@ -33,6 +33,7 @@ module.exports = class extends Command {
         const voiceChannelId = this.client.musicUtils.fetchVoiceChannel(message.channel);
         if (!voiceChannelId) {
             await this.client.commands.get('join').run(message, args);
+            //add fallback if member isn't in voice
         }
         if (args.length === 0) {
             return message.channel.send('You need to gimme a link or search term for me to look up >~<!');

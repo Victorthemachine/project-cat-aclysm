@@ -1,10 +1,10 @@
 const { Client, Collection, Permissions, MessageEmbed, Intents } = require('discord.js');
-const Util = require('./Util.js');
+const Util = require('./utils/Util.js');
 const Server = require('./server/_Server');
 const Database = require('./Database');
 const DatabaseSingleton = new Database();
 const MusicPlayer = require('./MusicPlayer');
-const MusicUtil = require('./MusicUtil.js');
+const MusicUtil = require('./utils/MusicUtil.js');
 //const Logger = require('winston')
 
 module.exports = class NyaBotClient extends Client {

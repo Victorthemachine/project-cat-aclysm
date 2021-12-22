@@ -2,14 +2,13 @@ const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
 const fs = require('fs');
-const request = require(`request`);
 
-const Command = require('./Command.js');
-const Event = require('./Event.js');
+const Command = require('../Command.js');
+const Event = require('../Event.js');
 
 //Configuration
-const Reactions = require('./../configuration/reactions.json');
-const BOT_CONSTANTS = require('./../configuration/botConstants');
+const Reactions = require('./../../configuration/reactions.json');
+const BOT_CONSTANTS = require('./../../configuration/botConstants');
 //Docs
 const { Channel } = require('discord.js');
 //=============
@@ -223,14 +222,6 @@ module.exports = class Util {
 		if (minutes < 10) { minutes = "0" + minutes; }
 		if (seconds < 10) { seconds = "0" + seconds; }
 		return hours + ' hr:' + minutes + ' min:' + seconds + ' sec';
-	}
-
-	//WTF v
-	//TODO: check if used, delete afterwards
-	async downloadFileFromURL(URL) {
-		request.get(URL)
-			.on('error', console.error)
-			.pipe(fs.createWriteStream('meme.png'));
 	}
 
 	/**
