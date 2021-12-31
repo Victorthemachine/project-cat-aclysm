@@ -7,9 +7,6 @@ module.exports = class extends Event {
 	async run(message) {
 		const mentionRegex = RegExp(`^<@!?${this.client.user.id}>$`);
 		const mentionRegexPrefix = RegExp(`^<@!?${this.client.user.id}> `);
-        logger.info('====================================================');
-		logger.info(message.content)
-        logger.info('====================================================');
 		if (!message.guild || message.author.bot) return;
 
 		// Check for attachment in HW channels, react

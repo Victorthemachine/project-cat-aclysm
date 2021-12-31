@@ -5,8 +5,10 @@
         "oldstart": "concurrently \"cd ./backend && nodemon index\" \"cd ./frontend && yarn start\""
     },
     "dependencies": {
+        "@discord-player/extractor": "^3.0.2",
         "@discordjs/opus": "^0.7.0",
         "axios": "^0.21.1",
+        "bad-words": "^3.0.4",
         "canvas": "^2.8.0",
         "concurrently": "^6.2.0",
         "cookie-parser": "^1.4.5",

@@ -1,9 +1,10 @@
 const { VoiceChannel, Collection, MessageEmbed } = require("discord.js");
 const logger = require("../Logger");
 const embedConfig = require('./../../configuration/embedConfig.json');
-//TODO: There should be a better solution than two maps
-const channelMap = new Collection();
-const reverseMap = new Collection();
+
+//Custom double way map
+const TwoWayMap = require('./TwoWayMap');
+const twoWayMap = new TwoWayMap();
 
 module.exports = class MusicUtil {
 
@@ -12,15 +13,11 @@ module.exports = class MusicUtil {
     }
 
     isBotInVoice(channel) {
-        logger.info(`Is channel null: ${channel === null}`)
         if (!channel) return false;
-
-        logger.info(`Is bot in channel: ${channel.members.has(this.client.user.id)}`);
         if (channel.members.has(this.client.user.id) === false) {
             return false;
         } else {
-            logger.info(`Is bot muted: ${channel.members.get(this.client.user.id).voice.mute}`)
-            if (channel.members.get(this.client.user.id).voice.mute === true) return false;    
+            if (channel.members.get(this.client.user.id).voice.mute === true) return false;
         }
         return true;
     }
@@ -45,23 +42,20 @@ module.exports = class MusicUtil {
     }
 
     killConnection(channel, reason) {
-        channel.members.get(this.client.user.id).voice.disconnect();
         if (this.client.player.getQueue(channel.guildId)) {
-            this.client.player.getQueue(channel.guildId).destroy();
+            this.client.player.getQueue(channel.guildId).destroy(true);
         }
-        let temp = channelMap.get(channel.id);
-        temp.send(reason);
-        reverseMap.delete(temp);
-        channelMap.delete(channel.id);
+        this.client.guilds.cache.get(channel.guild.id).channels.cache.get(twoWayMap.get(channel.id)).send(reason);
+        twoWayMap.deleteKey(channel.id);
     }
 
-    registerChannel(commandChannelId, voiceChannelId) {
-        channelMap.set(voiceChannelId, commandChannelId);
-        reverseMap.set(commandChannelId, voiceChannelId);
+    registerChannel(voiceChannelId, commandChannelId) {
+        twoWayMap.set(voiceChannelId, commandChannelId);
     }
 
     fetchVoiceChannel(commandChannelId) {
-        return reverseMap.get(commandChannelId);
+        logger.info('Keys in the two way map');
+        return twoWayMap.fetch(commandChannelId);
     }
 
     /**
@@ -71,30 +65,36 @@ module.exports = class MusicUtil {
      * 
      * @param {VoiceChannel} voiceChannel 
      */
-    verifyConnection({ channel }) {
+    verifyConnection(channel) {
 
     }
 
     wasDisconnected(channel) {
-        //Try catch, might have gotten kicked
-        try {
-            this.client.channels.fetch(channelMap.get(channel.id)).then(chann => {
-                chann.send('Well that was rude! No need to boot me out like that >~<!');
-            })
-        } catch {
-            logger.info(`Kicked out of ${channel.guild.name} during music playback`);
+        if (twoWayMap.get(channel.id)) {
+            //Try catch, might have gotten kicked
+            try {
+                this.client.channels.fetch(twoWayMap.get(channel.id))
+                    .then(chann => {
+                        chann.send('Well that was rude! No need to boot me out like that >~<!');
+                    })
+            } catch {
+                logger.info(`Kicked out of ${channel.guild.name} during music playback`);
+            }
+            if (this.client.player.getQueue(channel.guildId)) {
+                this.client.player.getQueue(channel.guildId).destroy();
+            }
+            twoWayMap.deleteKey(channel.id);
         }
-        if (this.client.player.getQueue(channel.guildId)) {
-            this.client.player.getQueue(channel.guildId).destroy();
-        }
-        reverseMap.delete(channelMap.get(channel.id));
-        channelMap.delete(channel.id);
     }
 
     setupSearchQueryEmbed({ member }, query, searchQuery) {
         let values = 'No results sorry';
         if (searchQuery.tracks.length > 0) {
-            values = searchQuery.tracks.map((track, index) => `\`${index}.\` ${track.title} - ${track.duration}`);
+            values = searchQuery.tracks.map((track, index) => {
+                if (index < 10) {
+                    return `\`${index + 1}.\` ${track.title} - *${track.duration}*`
+                }
+            });
         }
 
         const searchQueryEmbed = new MessageEmbed()
@@ -106,7 +106,7 @@ module.exports = class MusicUtil {
             .addFields(
                 { "name": "I have found OwO:", "value": values.join('\n').slice(0, 1023) }
             )
-            .setFooter('Just so we are clear, you got 15 seconds or I am gonna forget :P. Sowwy I got bad memory >,<')
+            .setFooter('Just so we are clear, you got 30 seconds or I am gonna forget :P. Sowwy I got bad memory >,<')
             .setTimestamp();
         return searchQueryEmbed;
     }

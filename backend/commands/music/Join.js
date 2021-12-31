@@ -5,9 +5,9 @@ module.exports = class extends Command {
 
     constructor(...args) {
         super(...args, {
-            aliases: [''],
-            description: '',
-            category: '',
+            aliases: [],
+            description: 'Joins your voice channel!',
+            category: 'Music',
             usage: '',
             ownerOnly: false
         });
@@ -47,7 +47,8 @@ module.exports = class extends Command {
                         }
                     }).connect(message.member.voice.channel);
                     logger.info('Connected to voice');
-                    this.client.musicUtils.registerChannel(message.channelId, message.member.voice.channelId);
+                    logger.info(`${message.member.voice.channelId} ${message.channelId}`);
+                    this.client.musicUtils.registerChannel(message.member.voice.channelId, message.channelId);
                     return;
                 } catch (error) {
                     logger.error(error);

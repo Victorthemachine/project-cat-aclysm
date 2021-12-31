@@ -4,7 +4,7 @@ const logger = require('./../../structures/Logger');
 module.exports = class extends Event {
 
     async run(oldVoiceState, newVoiceState) {
-        logger.info('====================================================');
+        logger.info('========================vVoiceStateUpdatev========================');
         const oldVoiceChannel = !oldVoiceState.channel ? null : await this.client.channels.fetch(oldVoiceState.channelId);
         const newVoiceChannel = !newVoiceState.channel ? null : await this.client.channels.fetch(newVoiceState.channelId);
         const wasInVoice = this.client.musicUtils.isBotInVoice(oldVoiceChannel);
@@ -14,6 +14,7 @@ module.exports = class extends Event {
         logger.info(JSON.stringify(newVoiceState))
         logger.info(wasInVoice);
         logger.info(isInVoice);
+
         //Do we care about the event?
         //If at least one is true, means bot is involved
         //AKA. music was or is playing
@@ -28,14 +29,16 @@ module.exports = class extends Event {
                     this.client.musicUtils.killConnection(newVoiceChannel, 'Nobody is listening, amma see myself out then... meanies');
                 }
             }
-
             //No need to check if bot or member got connected
         }
+        //if the old state had channel => there was connection
+        //If bot isn't in voice but old state has it's id
+        //Meaning bot got disconnected since otherwise
         if (oldVoiceChannel && isInVoice === false && oldVoiceState.id === this.client.user.id) {
                 //Got disconnected
                 this.client.musicUtils.wasDisconnected(oldVoiceChannel);
         }
-        logger.info('====================================================');
+        logger.info('========================^VoiceStateUpdate^========================');
     }
 
 };

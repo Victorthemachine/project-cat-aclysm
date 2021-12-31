@@ -1,8 +1,8 @@
 const Event = require('./../structures/Event');
 const activities = [
-	'Did you know that I am really tired?',
+	'These kids with their sci-fi mumbo jumbo like: sleep, happiness and Switzerland',
 	'Yes I in fact don\'t sleep I enter coma',
-	'Being a programmer means you like being confused. Weirdo',
+	'Will accept hefty donation of nuts during this harsh winter',
 	'If you want to help send Nya~san all of your collage savings or pizza',
 	'Munching on deez nuts',
 	'If you smell burning toast you are having a stroke or overcooking your toast'
