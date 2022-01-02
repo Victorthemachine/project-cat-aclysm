@@ -1,4 +1,14 @@
 {
+    "author": {
+        "name": "Victorthemachine",
+        "url": "https://github.com/Victorthemachine",
+        "email": "nya.san.developer@gmail.com"
+    },
+    "license": "GPL-3.0",
+    "version": "3.0.0",
+    "name": "project-cat-aclysm",
+    "main": "src/index.js",
+    "repository": "https://github.com/Victorthemachine/project-cat-aclysm",
     "scripts": {
         "build": "cd ./frontend && yarn build",
         "start": "cd ./backend && nodemon index",

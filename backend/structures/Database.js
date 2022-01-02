@@ -1,45 +1,49 @@
 //This should go without prefice but this is a singleton class
 const mongoose = require('mongoose');
+const logger = require('./Logger');
 
 mongoose.Promise = global.Promise;
-
 let connected = false;
-// Connect MongoDB at default port 27017.
-mongoose.connect('mongodb://localhost:27017/meowzers', {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true
-}, (err) => {
-    if (!err) {
-        console.log('MongoDB Connection Succeeded.');
-        connected = true;
-    } else {
-        console.log('Error in DB connection: ' + err)
-        connect = 'error'
-    }
-});
-
 class Database {
 
+    /**
+     * Connects to the database
+     * 
+     * @returns {Boolean} true - connected without issue, false - failed to connect
+     */
+    async connect() {
+        if (connected === false) {
+
+            // Connect MongoDB at default port 27017.
+            mongoose.connect('mongodb://localhost:27017/meowzers', {
+                useNewUrlParser: true,
+                useCreateIndex: true,
+                useUnifiedTopology: true,
+                autoIndex: false
+            }, (err) => {
+                if (!err) {
+                    logger.info('MongoDB Connection Succeeded.');
+                    connected = true;
+                } else {
+                    logger.crit('Error in DB connection: ' + err)
+                    connected = false;
+                }
+                return connected;
+            });
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 
+     * @returns {Boolean} if connected to database
+     */
     isConnected() {
-        return new Promise(resolve => {
-            resolve(this.awaitConnection(false));
-        })
+        return connected;
     }
 
-    awaitConnection(end) {
-        if (end === true) {
-            return (connected === 'error' ? false : true);
-        }
-        if (connected === true || connected === 'error') {
-            this.awaitConnection(true);
-        }
-        if (end === false) {
-            setTimeout(() => this.awaitConnection(false), 1000);
-        }
-    }
 }
-
 
 let instance;
 module.exports = class Singleton {
