@@ -33,13 +33,18 @@ module.exports = class NyaBotClient extends Client {
                 Intents.FLAGS.DIRECT_MESSAGE_TYPING
             ]
         });
-        //this.logger = Logger();
+
+        this.clientId = options.clientId;
+
+        this.global = options.global;
 
         this.validate(options);
 
         this.commands = new Collection();
 
         this.aliases = new Collection();
+
+        this.slashCommands = new Collection();
 
         this.events = new Collection();
 
@@ -72,6 +77,10 @@ module.exports = class NyaBotClient extends Client {
 
     async start(token = this.token) {
         this.utils.loadCommands();
+        this.utils.loadSlashCommands()
+            .then(() => {
+                this.utils.registerSlashCommands(token, this.clientId, this.global);
+            })
         this.utils.loadEvents();
         super.login(token);
     }

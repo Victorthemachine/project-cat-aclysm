@@ -3,6 +3,9 @@ const { promisify } = require('util');
 const glob = promisify(require('glob'));
 const fs = require('fs');
 
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+
 const Command = require('../Command.js');
 const Event = require('../Event.js');
 
@@ -53,6 +56,39 @@ module.exports = class Util {
 				}
 			}
 		});
+	}
+
+	async loadSlashCommands() {
+		return glob(`${this.directory}slashcommands/**/*.js`).then(slashCommands => {
+			for (const slashCommandFile of slashCommands) {
+				delete require.cache[slashCommandFile];
+				const { name } = path.parse(slashCommandFile);
+				const File = require(slashCommandFile);
+				const command = new File(this.client, name.toLowerCase());
+				const slashCommand = {
+					data: command.toJSON(),
+				}
+				console.log(slashCommand);
+				this.client.slashCommands.set(slashCommand.data.name, command);
+			}
+		});
+	}
+
+	async registerSlashCommands(token, clientId, global) {
+		const rest = new REST({ version: '9' }).setToken(token);
+		try {
+			console.log('Started refreshing application (/) commands.');
+
+			await rest.put(
+				Routes.applicationGuildCommands(clientId, '782596167158333460'),
+				{ body: this.client.slashCommands },
+			);
+
+			console.log('Successfully reloaded application (/) commands.');
+		} catch (error) {
+			console.error(error);
+		}
+
 	}
 
 	async loadEvents() {

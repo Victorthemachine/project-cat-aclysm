@@ -1,5 +1,4 @@
 const Command = require('../../structures/Command');
-
 module.exports = class extends Command {
 
     constructor(...args) {
@@ -13,7 +12,6 @@ module.exports = class extends Command {
     }
 
     async run(message, args) {
-
     }
 
 };
