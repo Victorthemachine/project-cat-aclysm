@@ -1,5 +1,6 @@
 const Event = require('../structures/Event');
 const vm = require('vm');
+const { extractSlashCommandOptions } = require('./../structures/utils/InteractionExtractor');
 
 module.exports = class extends Event {
 
@@ -13,7 +14,7 @@ module.exports = class extends Event {
         } catch (err) {
             console.error(err);
         }
-
+        console.log(extractSlashCommandOptions(interaction));
         if (interaction.isCommand() === true) {
             this.client.slashCommands.get(interaction.commandName).execute(interaction);
         }

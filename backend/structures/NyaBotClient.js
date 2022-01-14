@@ -5,6 +5,7 @@ const Database = require('./Database');
 const DatabaseSingleton = new Database();
 const MusicPlayer = require('./MusicPlayer');
 const MusicUtil = require('./utils/MusicUtil.js');
+const { setClient } = require('./utils/InteractionExtractor');
 //const Logger = require('winston')
 
 module.exports = class NyaBotClient extends Client {
@@ -76,6 +77,7 @@ module.exports = class NyaBotClient extends Client {
     }
 
     async start(token = this.token) {
+        setClient(this);
         this.utils.loadCommands();
         this.utils.loadSlashCommands()
             .then(() => {
