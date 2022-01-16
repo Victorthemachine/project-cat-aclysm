@@ -1,7 +1,6 @@
 const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
-const fs = require('fs');
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -9,12 +8,12 @@ const { Routes } = require('discord-api-types/v9');
 const Command = require('../Command.js');
 const Event = require('../Event.js');
 
-//Configuration
+// Configuration
 const Reactions = require('./../../configuration/reactions.json');
 const BOT_CONSTANTS = require('./../../configuration/botConstants');
-//Docs
-const { Channel } = require('discord.js');
-//=============
+// Docs
+const { Channel, Constants: { ChannelTypes } } = require('discord.js');
+// =============
 
 const { reactToThis } = Reactions;
 
@@ -66,8 +65,8 @@ module.exports = class Util {
 				const File = require(slashCommandFile);
 				const command = new File(this.client, name.toLowerCase());
 				const slashCommand = {
-					data: command.toJSON(),
-				}
+					data: command.toJSON()
+				};
 				console.log(slashCommand);
 				this.client.slashCommands.set(slashCommand.data.name, command);
 			}
@@ -81,14 +80,13 @@ module.exports = class Util {
 
 			await rest.put(
 				Routes.applicationGuildCommands(clientId, '782596167158333460'),
-				{ body: this.client.slashCommands },
+				{ body: this.client.slashCommands }
 			);
 
 			console.log('Successfully reloaded application (/) commands.');
 		} catch (error) {
 			console.error(error);
 		}
-
 	}
 
 	async loadEvents() {
@@ -108,9 +106,9 @@ module.exports = class Util {
 
 	/**
 	 * TODO: Rewrite this with the new role command
-	 * @param {*} str 
-	 * @param {*} pos 
-	 * @returns 
+	 * @param {*} str
+	 * @param {*} pos
+	 * @returns
 	 */
 	getContent(str, pos) {
 		if (pos === 'undefined') pos = 1;
@@ -181,14 +179,14 @@ module.exports = class Util {
 		return new Intl.ListFormat('en-GB', { style: 'short', type: type }).format(array);
 	}
 
-	//TODO: Get rid of this in code, delete afterwards
+	// TODO: Get rid of this in code, delete afterwards
 	throwError(description) {
 		if (!description) description = 'Error occured';
 		return new Error(description);
 	}
 
-	//WTF v (THERE IS ALREADY A METHOD FOR THAT!)
-	//TODO: Unite all time convertors
+	// WTF v (THERE IS ALREADY A METHOD FOR THAT!)
+	// TODO: Unite all time convertors
 	timeConversion(millisec) {
 		var seconds = (millisec / 1000).toFixed(1);
 
@@ -214,7 +212,7 @@ module.exports = class Util {
 		str = str.toLowerCase();
 		reactToThis.string.forEach(el => {
 			// `/\\b${el}\\b/gi`
-			const regex = new RegExp('\\b' + el + '\\b', 'g');
+			const regex = new RegExp(`\\b${el}\\b`, 'g');
 			if (regex.test(str)) {
 				result = true;
 			}
@@ -229,7 +227,7 @@ module.exports = class Util {
 			/*			console.log(el);
 						if (str.includes(el)) result = el;*/
 			// `/\\b${el}\\b/gi`
-			const regex = new RegExp('\\b' + el + '\\b');
+			const regex = new RegExp(`\\b${el}\\b`);
 			if (str.match(regex) !== null) {
 				console.log('Look at me I did something!');
 				result = str.match(regex);
@@ -241,31 +239,32 @@ module.exports = class Util {
 
 	reactToMessage(message) {
 		const reaction = this.fetchReactionToMessage(message.content).split(' ');
-		let index = reaction.length;
+		const index = reaction.length;
 		for (let i = 0; i < index; i++) {
-			message.react(reaction[i])
+			message.react(reaction[i]);
 		}
 	}
 
-	//TODO: Unite all time convertors
+	// TODO: Unite all time convertors
 	formatTimeToHHMMSS(string) {
-		var sec_num = parseInt(string, 10) / 1000; // don't forget the second param
-		var hours = Math.floor(sec_num / 3600);
-		var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-		var seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60));
+		// don't forget the second param
+		var secs = parseInt(string, 10) / 1000;
+		var hours = Math.floor(secs / 3600);
+		var minutes = Math.floor((secs - (hours * 3600)) / 60);
+		var seconds = Math.round(secs - (hours * 3600) - (minutes * 60));
 
-		if (hours < 10) { hours = "0" + hours; }
-		if (minutes < 10) { minutes = "0" + minutes; }
-		if (seconds < 10) { seconds = "0" + seconds; }
-		return hours + ' hr:' + minutes + ' min:' + seconds + ' sec';
+		if (hours < 10) { hours = `0${hours}`; }
+		if (minutes < 10) { minutes = `0${minutes}`; }
+		if (seconds < 10) { seconds = `0${seconds}`; }
+		return `${hours} hr:${minutes} min:${seconds} sec`;
 	}
 
 	/**
 	 * Get old uncached messages from a channel
-	 * 
-	 * @param {Channel} channel 
-	 * @param {Integer} amount 
-	 * 
+	 *
+	 * @param {Channel} channel
+	 * @param {Integer} amount
+	 *
 	 * @returns {Array} messages
 	 */
 	fetchMessages(channel, amount) {
@@ -289,7 +288,7 @@ module.exports = class Util {
 					limit = left;
 					left = 0;
 				}
-				let options = { limit: limit };
+				const options = { limit: limit };
 				if (initilized === true) {
 					console.log(`Current _messages: ${_messages.length}`);
 					options.before = _messages.last().id;
@@ -308,9 +307,9 @@ module.exports = class Util {
 					})
 					.catch(err => {
 						console.error(err);
-					})
+					});
 			}
-		})
+		});
 	}
 
 	isOlder(message, days) {
@@ -338,9 +337,7 @@ module.exports = class Util {
 						},
 						guilds: []
 					};
-					const userGuilds = this.client.guilds.cache.filter(guild => {
-						return guild.members.cache.findKey(member => member.id === id)
-					})
+					const userGuilds = this.client.guilds.cache.filter(guild => guild.members.cache.findKey(member => member.id === id));
 					this.canInvite(target, userGuilds)
 						.then(filtered => {
 							data.guilds = this.determinePosition(target, userGuilds, filtered);
@@ -351,9 +348,8 @@ module.exports = class Util {
 				.catch(err => {
 					console.error(err);
 					resolve({});
-				})
-
-		})
+				});
+		});
 	}
 
 	canInvite(user, guildCollection) {
@@ -363,20 +359,20 @@ module.exports = class Util {
 				guild.members.fetch(user)
 					.then(targetMember => {
 						filteredGuilds.push({ icon: guild.iconURL(), name: guild.name, id: guild.id, invitable: false });
-						if ((guild.systemChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+						if (guild.systemChannel.permissionsFor(targetMember).has('CREATE_INSTANT_INVITE')) {
 							filteredGuilds[filteredGuilds.length - 1].invitable = true;
 						}
-					})
+					});
 			});
 			resolve(filteredGuilds);
-		})
+		});
 	}
 
 	/**
 	 * Add support for custom tiers in future (specific roles etc.)
-	 * @param {*} user 
-	 * @param {*} guildCollection 
-	 * @param {*} dataToEnrich 
+	 * @param {*} user
+	 * @param {*} guildCollection
+	 * @param {*} dataToEnrich
 	 */
 	determinePosition(user, guildCollection, dataToEnrich) {
 		let counter = 0;
@@ -386,21 +382,21 @@ module.exports = class Util {
 		guildCollection.each(guild => {
 			let position = 'Member';
 			if (guild.ownerId === user.id) {
-				position = 'Owner'
+				position = 'Owner';
 			} else {
-				const modPerms = new Set([MANAGE_MESSAGES, MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS, VIEW_AUDIT_LOG, MANAGE_NICKNAMES])
+				const modPerms = new Set([MANAGE_MESSAGES, MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS, VIEW_AUDIT_LOG, MANAGE_NICKNAMES]);
 				guild.members.fetch(user)
 					.then(target => {
 						if (target.permissions.has(ADMINISTRATOR)) {
 							position = 'Admin';
 						} else if (target.permissions.toArray().every(Set.prototype.has, modPerms)) {
-							position = 'Mod'
+							position = 'Mod';
 						}
-					})
+					});
 			}
 			shallowCopy[counter] = Object.assign(shallowCopy[counter], { position: position });
 			counter++;
-		})
+		});
 		return shallowCopy;
 	}
 
@@ -414,56 +410,83 @@ module.exports = class Util {
 							.then(targetChannel => {
 								targetGuild.members.fetch(target)
 									.then(targetMember => {
-										if ((targetChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+										if (targetChannel.permissionsFor(targetMember).has('CREATE_INSTANT_INVITE')) {
 											targetGuild.invites.create(targetChannel, { maxAge: 0, maxUses: 0 })
 												.then(invite => {
-													resolve({ invite: invite.url })
+													resolve({ invite: invite.url });
 												})
 												.catch(error => {
-													console.log('Step three')
-													console.log(error)
+													console.log('Step three');
+													console.log(error);
 													resolve({ error: 'missing permission' });
-												})
+												});
 										}
-									})
+									});
 							})
 							.catch(error => {
-								console.log('Step two')
-								console.log(error)
+								console.log('Step two');
+								console.log(error);
 								resolve({});
 							});
 					})
 					.catch(err => {
-						console.log('Step one')
+						console.log('Step one');
 						console.error(err);
 						resolve({});
-					})
+					});
 			} else {
 				this.client.users.fetch(id)
 					.then(target => {
 						const targetGuild = this.client.guilds.cache.get(guildId);
 						targetGuild.members.fetch(target)
 							.then(targetMember => {
-								if ((targetGuild.systemChannel.permissionsFor(targetMember)).has('CREATE_INSTANT_INVITE')) {
+								if (targetGuild.systemChannel.permissionsFor(targetMember).has('CREATE_INSTANT_INVITE')) {
 									targetGuild.invites.create(targetGuild.systemChannel, { maxAge: 0, maxUses: 0 })
 										.then(invite => {
-											resolve({ invite: invite.url })
+											resolve({ invite: invite.url });
 										})
 										.catch(error => {
-											console.log('Step three')
-											console.log(error)
+											console.log('Step three');
+											console.log(error);
 											resolve({ error: 'missing permission' });
-										})
+										});
 								}
-							})
+							});
 					})
 					.catch(err => {
-						console.log('Step one')
+						console.log('Step one');
 						console.error(err);
 						resolve({});
-					})
-
+					});
 			}
 		});
 	}
+
+	/**
+	 * Formats the channel name based on the channel type.
+	 * See {@link ChannelTypes} for reference.
+	 *
+	 * @param {Array | Integer} channels channelTypes to format
+	 * @returns {string} formatted channel name
+	 */
+	formatChannelTypes(channels) {
+		if (channels) {
+			if (Array.isArray(channels)) {
+				console.log('Formatting array of channels');
+				const channelNames = channels.map(el => {
+					let channelName = ChannelTypes[el].replace('_', ' ');
+					if (channelName !== 'DM') {
+						channelName = (channelName.charAt(0) + channelName.toLocaleLowerCase().slice(1)).replace('dm', 'chat');
+					}
+					return `${channelName}s`;
+				});
+				return channelNames.join(', ');
+			} else {
+				return `${ChannelTypes[channels]}`;
+			}
+		} else {
+			return '';
+		}
+	}
+
 };

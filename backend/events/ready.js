@@ -16,13 +16,13 @@ module.exports = class extends Event {
 		});
 	}
 	statusInterval(timeout) {
-		setTimeout(function () {
+		setTimeout(() => {
 			console.log(new Date());
 			this.client.user.setActivity(`${this.client.prefix}help | ${activities[Math.floor(Math.random() * activities.length)]}`,
-				{ type: 'PLAYING' })
-			this.statusInterval(300000)
-		}.bind(this), timeout ? timeout : 10);
-	};
+				{ type: 'PLAYING' });
+			this.statusInterval(300000);
+		}, timeout || 10);
+	}
 
 	run() {
 		console.log([
