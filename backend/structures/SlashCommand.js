@@ -27,7 +27,6 @@ module.exports = class SlashCommand extends SlashCommandBuilder {
 		this.botPerms = new Permissions(options.botPerms).freeze();
 		this.ownerOnly = options.ownerOnly || false;
 		this.nsfw = options.nsfw || false;
-		// Need to include channel support
 		this.channels = options.channels || [ChannelTypes.GUILD_TEXT, ChannelTypes.DM, ChannelTypes.GROUP_DM];
 	}
 

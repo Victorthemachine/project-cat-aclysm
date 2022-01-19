@@ -25,7 +25,7 @@ const extractSlashCommandOptions = (interaction) => {
 			}
 		});
 		logger.info('------------------cmdOptions------------------');
-		logger.info(cmdOptions);
+		logger.info(JSON.stringify(cmdOptions));
 		logger.info('----------------------------------------------');
 		return cmdOptions;
 	} else {
