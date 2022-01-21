@@ -15,33 +15,28 @@ module.exports = class extends SlashCommand {
             channels: [ChannelTypes.GUILD_TEXT]
         });
 
-        this.setDefaultPermission(true);
-        this.addSubcommand(cmd => {
-            cmd.addIntegerOption(option => {
-                option.setMinValue(1);
-                option.setRequired(true);
-                option.setName('Timeout');
-                option.setDescription('The amount of time before invite expires');
-            });
-            cmd.addStringOption(option => {
-                option.setRequired(true);
-                option.setName('Unit');
-                option.setDescription('Time unit of your choosing');
-                option.addChoices(['min', 'hr', 'day']);
+        this.setDefaultPermission(true)
+            .addIntegerOption(option => {
+                return option.setName('timeout')
+                    .setDescription('The amount of time before invite expires. You can define the time unit, default is hours')
+                    .setMinValue(1)
+                    .setRequired(false);
             })
-            cmd.setDescription('Defines max age of an invite')
-            cmd.setName('MaxAge')
-        })
-        this.addBooleanOption(option => {
-            option.setName('Temporary');
-            option.setDescription('If people receive temp role on join');
-            option.setRequired(false);
-        })
-        this.addIntegerOption(option => {
-            option.setName('Uses');
-            option.setDescription('How many uses before invite expires');
-            option.setRequired(false);
-        })
+            .addStringOption(option => {
+                return option.setName('unit')
+                    .setDescription('Time unit of your choosing (use: min, hr, day, week)')
+                    .setRequired(false)
+            })
+            .addBooleanOption(option => {
+                return option.setName('temporary')
+                    .setDescription('If people receive temp role on join')
+                    .setRequired(false);
+            })
+            .addIntegerOption(option => {
+                return option.setName('uses')
+                    .setDescription('How many uses before invite expires')
+                    .setRequired(false);
+            })
     }
 
     async execute(interaction, args) {
