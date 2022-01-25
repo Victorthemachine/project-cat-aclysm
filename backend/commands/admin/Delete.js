@@ -25,8 +25,9 @@ module.exports = class extends Command {
 			message.reply('You silly hooman give me a proper task >~< (1 or more messages to delete)');
 			return;
 		}
-		this.client.utils.fetchMessages(message.channel, amount)
+		this.client.utils.fetchMessages(message.guild, { channel: message.channel, amount: amount })
 			.then(collection => {
+				console.log(`The wonderfull output: ${collection.values().lenght}`);
 				const deletionArray = collection.filter(a => !this.client.utils.isOlder(a)).map(b => b);
 				let leftToGoThrough = deletionArray.length;
 				actualAmount = deletionArray.length;

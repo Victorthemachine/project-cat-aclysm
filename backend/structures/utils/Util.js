@@ -1,6 +1,8 @@
+/* eslint-disable semi */
 const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
+const logger = require('./../Logger');
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -10,9 +12,10 @@ const Event = require('../Event.js');
 
 // Configuration
 const Reactions = require('./../../configuration/reactions.json');
-const BOT_CONSTANTS = require('./../../configuration/botConstants');
+const CONSTANTS = require('./../../configuration/botConstants');
 // Docs
-const { Channel, Constants: { ChannelTypes } } = require('discord.js');
+const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, Collection, Message, TextChannel } = require('discord.js');
+const { urlToHttpOptions } = require('url');
 // =============
 
 const { reactToThis } = Reactions;
@@ -267,6 +270,7 @@ module.exports = class Util {
 	 *
 	 * @returns {Array} messages
 	 */
+	/*
 	fetchMessages(channel, amount) {
 		let _messages;
 		let left = amount;
@@ -311,15 +315,142 @@ module.exports = class Util {
 			}
 		});
 	}
+	*/
+
+	/**
+	 * 
+	 * @param {TextChannel} channel 
+	 * @param {number.Integer} amount 
+	 * @param {{ messageAgeOverride: boolean }} scope 
+	 * @param {function messageFilter(message) { return boolean }} messageFilter 
+	 * @returns {Collection<Message>}
+	 */
+	async #recursionMessageFetch(channels, amount, scope, messageFilter) {
+		return new Promise(resolve => {
+			return resolve(this.#loopUtil(channels, amount, scope, messageFilter))
+		})
+	}
+
+	// NOTE: I am well aware this approach is god awful but I am way too tired rn
+	/**
+	 * 
+	 * @param {TextChannel} channel 
+	 * @param {number.Integer} amount 
+	 * @param {{ messageAgeOverride: boolean }} scope 
+	 * @param {function messageFilter(message) { return boolean }} messageFilter 
+	 * @param {Collection} messageCollection 
+	 * @param {number.Integer} index
+	 * @returns {Collection<Message>}
+	 */
+	 async #loopUtil(channels, amount, scope, messageFilter, messageCollection = new Collection(), index = 0) {
+		console.log(channels.length, index);
+		if (index === channels.length) return messageCollection;
+		messageCollection = messageCollection.concat(await this.#fetchUtil(channels[index], amount, scope, messageFilter));
+		return await this.#loopUtil(channels, amount, scope, messageFilter, messageCollection, index + 1);
+	}
+
+	/**
+	 * 
+	 * @param {TextChannel} channel 
+	 * @param {number.Integer} amount 
+	 * @param {{ messageAgeOverride: boolean }} scope 
+	 * @param {function messageFilter(message) { return boolean }} messageFilter 
+	 * @param {Collection} messageCollection 
+	 * @returns {Collection<Message>}
+	 */
+	async #fetchUtil(channel, amount, scope, messageFilter, messageCollection = new Collection()) {
+		return new Promise(resolve => {
+			if (amount === 0) return resolve(messageCollection);
+			let limit;
+			if (amount !== -1) {
+				if (amount > 100) {
+					limit = 100;
+					amount -= 100
+				} else {
+					limit = amount;
+					amount = 0;
+				}
+			} else {
+				limit = 100;
+			}
+			const options = {
+				limit: limit
+			};
+			if (messageCollection.last()) options.before = messageCollection.last().id;
+			channel.messages.fetch(options).then(msgCollection => {
+				if (!scope.messageAgeOverride || scope.messageAgeOverride === false) {
+					if (msgCollection.first() && this.isOlder(msgCollection.first()) === true) amount = 0
+				}
+				messageCollection = messageCollection.concat(msgCollection.filter(message => messageFilter(message)));
+				return resolve(this.#fetchUtil(channel, amount, scope, messageFilter, messageCollection));
+			}).catch(err => {
+				logger.warn(`Failed to fetch messages in ${guild.name}`);
+				logger.warn(err);
+				return resolve(this.#fetchUtil(channel, 0, scope, messageFilter, messageCollection));
+			})
+		});
+	}
+
+	/**
+	 * Fetches all messages from guild according to your scope.
+	 * Your scope is determined by channel or targetsId.
+	 * You can also choose to only fetch amount.
+	 * Although it's recommended only if you scope a channel to use amount.
+	 * Since this function iterates guild channels and therefore would fetch the amount from every channel in order.
+	 * May result in way more messages than you expected.
+	 *
+	 * Note: This function only returns messages that aren't older than 14 days.
+	 * Since any of the messages over that wouldn't be deleted and would result in error.
+	 * If you want to disable this functionality, use messageAgeOverride.
+	 *
+	 * @param {Guild} guild from where to fetch messages
+	 * @param {{ channel: TextChannel, amount: number.Integer, targetId: string, messageAgeOverride: boolean}} scope specifying the scope to fetch messages
+	 *
+	 * @returns {Collection<Message>} collection of messages
+	 */
+	async fetchMessages(guild, scope = {}) {
+		return new Promise(resolve => {
+			let messages = new Collection();
+			let channelFilter;
+			let messageFilter;
+			// Setup a filter
+			if (scope.targetId) {
+				channelFilter = (channel) => channel.type === ChannelTypes.GUILD_TEXT;
+				if (scope.messageAgeOverride && scope.messageAgeOverride === true) {
+					messageFilter = (message) => message.author.id === scope.targetId;
+				} else {
+					messageFilter = (message) => (message.author.id === scope.targetId) && (this.isOlder(message) === false);
+				}
+			} else if (scope.channel) {
+				if (scope.messageAgeOverride && scope.messageAgeOverride === true) {
+					messageFilter = (message) => true;
+				} else {
+					messageFilter = (message) => this.isOlder(message) === false
+				}
+			}
+			console.log(channelFilter);
+			console.log(messageFilter);
+			if (!messageFilter) return messages;
+			const channels = !channelFilter ? [scope.channel] : guild.channels.cache.filter(channel => channelFilter(channel)).map(a => a);
+			console.log(channels.map(a => a.id));
+			if (channels.length === 0) return messages;
+			// Needs to be constant to be able to fetch same amount from all the channels
+			const amountToFetch = scope.amount ? scope.amount : -1;
+			this.#recursionMessageFetch(channels, amountToFetch, scope, messageFilter)
+				.then(msgCollection => {
+					return resolve(msgCollection);
+				});
+		});
+	}
 
 	isOlder(message, days) {
 		let check = false;
 		const currentTime = Date.now();
 		if (days) {
-			if ((currentTime - message.createdTimestamp) >= (days * BOT_CONSTANTS.milis.day)) {
+			if ((currentTime - message.createdTimestamp) >= (days * CONSTANTS.milis.milisTime.day)) {
 				check = true;
 			}
-		} else if ((currentTime - message.createdTimestamp) >= (BOT_CONSTANTS.milis.week * 2)) {
+		} else if ((currentTime - message.createdTimestamp) >= (CONSTANTS.milis.milisTime.week * 2)) {
 			check = true;
 		}
 		return check;
@@ -384,10 +515,17 @@ module.exports = class Util {
 			if (guild.ownerId === user.id) {
 				position = 'Owner';
 			} else {
-				const modPerms = new Set([MANAGE_MESSAGES, MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS, VIEW_AUDIT_LOG, MANAGE_NICKNAMES]);
+				const modPerms = new Set([
+					Permissions.FLAGS.MANAGE_MESSAGES,
+					Permissions.FLAGS.MANAGE_ROLES,
+					Permissions.FLAGS.KICK_MEMBERS,
+					Permissions.FLAGS.BAN_MEMBERS,
+					Permissions.FLAGS.VIEW_AUDIT_LOG,
+					Permissions.FLAGS.MANAGE_NICKNAMES
+				]);
 				guild.members.fetch(user)
 					.then(target => {
-						if (target.permissions.has(ADMINISTRATOR)) {
+						if (target.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
 							position = 'Admin';
 						} else if (target.permissions.toArray().every(Set.prototype.has, modPerms)) {
 							position = 'Mod';

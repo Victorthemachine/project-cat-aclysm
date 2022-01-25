@@ -4,13 +4,14 @@ const logger = require('./Logger');
 
 mongoose.Promise = global.Promise;
 let connected = false;
+// TODO: Look into Enmap, looks very promising. Sadly it's not MongoDB compatible but still looks very good
 class Database {
 
 	/**
-     * Connects to the database
-     *
-     * @returns {boolean} true - connected without issue, false - failed to connect
-     */
+	 * Connects to the database
+	 *
+	 * @returns {boolean} true - connected without issue, false - failed to connect
+	 */
 	async connect() {
 		if (connected === false) {
 			// Connect MongoDB at default port 27017.
@@ -35,9 +36,9 @@ class Database {
 	}
 
 	/**
-     *
-     * @returns {boolean} if connected to database
-     */
+	 *
+	 * @returns {boolean} if connected to database
+	 */
 	isConnected() {
 		return connected;
 	}
