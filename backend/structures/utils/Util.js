@@ -14,8 +14,7 @@ const Event = require('../Event.js');
 const Reactions = require('./../../configuration/reactions.json');
 const CONSTANTS = require('./../../configuration/botConstants');
 // Docs
-const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, Collection, Message, TextChannel } = require('discord.js');
-const { urlToHttpOptions } = require('url');
+const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, CategoryChannel, Collection, Message, TextChannel } = require('discord.js');
 // =============
 
 const { reactToThis } = Reactions;
@@ -404,7 +403,7 @@ module.exports = class Util {
 	 * If you want to disable this functionality, use messageAgeOverride.
 	 *
 	 * @param {Guild} guild from where to fetch messages
-	 * @param {{ channel: TextChannel, amount: number.Integer, targetId: string, messageAgeOverride: boolean}} scope specifying the scope to fetch messages
+	 * @param {{ channel: TextChannel | CategoryChannel, amount: number.Integer, targetId: string, messageAgeOverride: boolean}} scope specifying the scope to fetch messages
 	 *
 	 * @returns {Collection<Message>} collection of messages
 	 */
@@ -431,7 +430,12 @@ module.exports = class Util {
 			console.log(channelFilter);
 			console.log(messageFilter);
 			if (!messageFilter) return messages;
-			const channels = !channelFilter ? [scope.channel] : guild.channels.cache.filter(channel => channelFilter(channel)).map(a => a);
+			let channels;
+			if (ChannelTypes[scope.channel] === ChannelTypes.GUILD_CATEGORY) {
+				channels = scope.channel.children.map(a => a);
+			} else {
+				channels = !channelFilter ? [scope.channel] : guild.channels.cache.filter(channel => channelFilter(channel)).map(a => a);
+			}
 			console.log(channels.map(a => a.id));
 			if (channels.length === 0) return messages;
 			// Needs to be constant to be able to fetch same amount from all the channels

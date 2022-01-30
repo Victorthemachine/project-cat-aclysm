@@ -2,7 +2,7 @@ const { Permissions, Constants: { ChannelTypes } } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 /**
- * @extends {SlashCommandBuilder} SlachCommandBuilder discord.js
+ * @extends {SlashCommandBuilder} SlashCommandBuilder discord.js
  */
 module.exports = class SlashCommand extends SlashCommandBuilder {
 

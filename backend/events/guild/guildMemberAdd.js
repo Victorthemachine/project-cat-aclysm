@@ -1,5 +1,4 @@
 const Event = require('./../../structures/Event');
-const Canvas = require('canvas');
 const { MessageAttachment } = require('discord.js');
 
 module.exports = class extends Event {
@@ -11,6 +10,7 @@ module.exports = class extends Event {
 	}
 
 	async run(member) {
+		/*
 		const canvas = Canvas.createCanvas(700, 250);
 		const context = canvas.getContext('2d');
 		const background = await Canvas.loadImage(`${__dirname}./../../structures/public/welcome.jpg`);
@@ -29,7 +29,8 @@ module.exports = class extends Event {
 
 		const attachment = new MessageAttachment(canvas.toBuffer(), 'profile-image.png');
 
-		member.guild.systemChannel.send({ files: [attachment] });
+		member.guild.systemChannel.send({ files: [attachment] });\
+		*/
 	}
 
 };
