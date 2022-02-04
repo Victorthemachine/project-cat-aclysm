@@ -4,6 +4,7 @@ import AuthorizedRoute from 'base-shell/lib/components/AuthorizedRoute'
 import UnauthorizedRoute from 'base-shell/lib/components/UnauthorizedRoute'
 
 const SignIn = lazy(() => import('../pages/SignIn/SignIn'))
+const UnknownUser = lazy(() => import('../pages/UnknownUser/UnknownUser'))
 
 const SignUp = lazy(() => import('../pages/SignUp/SignUp'))
 const PasswordReset = lazy(() => import('../pages/PasswordReset/PasswordReset'))
@@ -17,6 +18,15 @@ const TabsDemo = lazy(() => import('../pages/TabsDemo'))
 const MyAccount = lazy(() => import('../pages/MyAccount/MyAccount'))
 
 const routes = [
+  {
+    path: '/dashboard',
+    exact: true,
+    element: (
+      <UnauthorizedRoute>
+        <UnknownUser redirectTo="/home" />
+      </UnauthorizedRoute>
+    ),
+  },
   {
     path: '/signin',
     exact: true,

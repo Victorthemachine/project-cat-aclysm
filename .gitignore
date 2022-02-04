@@ -125,6 +125,8 @@ dist
 .yarn/sdks
 .yarn/versions
 
+.yarnrc.yml
+
 ### react ###
 .DS_*
 **/*.backup.*

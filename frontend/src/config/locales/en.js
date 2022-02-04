@@ -2,13 +2,20 @@ import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
   app_name: 'React Most Wanted',
-  sign_in: 'Sign in',
+  sign_in: 'Session expired',
   sign_out: 'Sign out',
   sign_up: 'Sign up',
   email: 'Email',
   username: 'Username',
   // deepcode ignore NoHardcodedPasswords: intended
+  sign_in_context: `Your sessing has expired or you haven't yet used the bot.
+  Head to Discord and use command /manage.
+  Paste your PIN you received from the bot in your DMs or simply open the link.`,
+  entry_pin: 'Enter your PIN',
+  invalid_entry_pin: 'PIN must be 10 characters long',
   password: 'Password',
+  submit_pin: 'Submit',
+  to_discord: 'Open Discord',
   about: 'About',
   home: 'Home',
   page_not_found: 'Page not found',

@@ -48,8 +48,8 @@ const config = {
   },
   theme: {
     themes,
-    defaultThemeID: 'default',
-    defaultIsDarkMode: true,
+    defaultThemeID: 'light',
+    defaultIsDarkMode: false,
     defaultIsRTL: false, //change this to true for default Right to Left Language support
   },
   pages: {

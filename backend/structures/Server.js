@@ -18,7 +18,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "../../frontend", "build")));
-app.use(express.static("public"));
+console.log(path.join(__dirname, "server/public"));
+app.use('/assets', express.static(path.join(__dirname, "server/public")));
 
 app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, "../../frontend", "build", "index.html"));

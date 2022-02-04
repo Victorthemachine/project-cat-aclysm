@@ -1,6 +1,6 @@
 const { Client, Collection, Permissions, Intents } = require('discord.js');
 const Util = require('./utils/Util.js');
-const Server = require('./server/_Server');
+const Server = require('./Server');
 const Database = require('./Database');
 const DatabaseSingleton = new Database();
 const MusicPlayer = require('./MusicPlayer');
