@@ -5,6 +5,7 @@ const Database = require('./Database');
 const DatabaseSingleton = new Database();
 const MusicPlayer = require('./MusicPlayer');
 const MusicUtil = require('./utils/MusicUtil.js');
+const ServerUtils = require('./utils/ServerUtils');
 const { setClient } = require('./utils/InteractionExtractor');
 // const Logger = require('winston')
 
@@ -52,6 +53,8 @@ module.exports = class NyaBotClient extends Client {
 		this.utils = new Util(this);
 
 		this.musicUtils = new MusicUtil(this);
+
+		this.serverUtils = new ServerUtils(this);
 
 		this.owners = options.owners;
 

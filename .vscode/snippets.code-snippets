@@ -97,5 +97,24 @@
 			"};"
 		]
 	},
-	
+	"BotRouter class": {
+		"prefix": "rt",
+		"scope": "javascript",
+		"body": [
+			"const BotRoute = require('../structures/BotRoute');",
+			"",
+			"module.exports = class extends BotRoute {",
+			"",
+			"\tconstructor(...args) {",
+			"\t\tsuper(...args);",
+			"\t\tthis.get('/', (req, res) => this.route(req, res));",
+			"\t}",
+			"",
+			"\troute(req, res) {",
+			"",
+			"\t}",
+			"",
+			"};"
+		]
+	},
 }

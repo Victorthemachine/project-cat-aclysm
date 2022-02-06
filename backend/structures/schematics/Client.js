@@ -48,7 +48,7 @@ clientSchema.statics.resetAuthByPin = function (pin) {
 };
 
 clientSchema.statics.setAuthByUserId = function (id, auth) {
-	return this.updateOne({ discord: { userId: id } }, { auth: { url: auth.url, pin: auth.pin, createdAt: Date.now() }});
+	return this.updateOne({ discord: { userId: id } }, { auth: { url: auth.url, pin: auth.pin, createdAt: Date.now() } });
 };
 
 // Export the model
