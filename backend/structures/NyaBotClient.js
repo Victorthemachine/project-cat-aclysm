@@ -58,9 +58,10 @@ module.exports = class NyaBotClient extends Client {
 
 		this.owners = options.owners;
 
-		this.server = new Server();
+		this.server = new Server(this);
 
 		this.db = DatabaseSingleton.getInstance();
+		this.db.connect();
 
 		this.player = new MusicPlayer(this);
 	}

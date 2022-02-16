@@ -1,8 +1,8 @@
 // In case I or anyone else needs solution for mass translation (which I doubt), but refactoring the code would be simple really
 // So I will leave reference for babel plugin that automates it. File has to be JSON though!
 // https://codeandweb.com/babeledit/tutorials/how-to-translate-your-react-app-with-react-intl
-export const en_messages = {
-    welcome: 'Welcome lads and ladettes',
+export const cz_messages = {
+    welcome: 'Dobré ráno čůráci',
 
     sign_in: 'Authentification step',
     sign_in_context: `Your sessing has expired or you haven't yet used the bot.

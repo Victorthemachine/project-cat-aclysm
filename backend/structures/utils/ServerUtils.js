@@ -30,6 +30,11 @@ module.exports = class ServerUtils {
 		const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
 		this.publicKey = publicKey;
 		this.privateKey = privateKey;
+		try {
+			Client.collection.drop();
+		} catch (err) {
+			logger.warn('Client collection is already empty');
+		}
 	}
 
 	/**
@@ -90,12 +95,12 @@ module.exports = class ServerUtils {
 		const query = await Client.findByUrl(url);
 		if (query.length === 0) return {};
 		const relevant = query.shift();
-		if (!relevant.auth.url) return {};
-		Client.resetAuthByUrl(url);
+		if (Object.keys(relevant.auth).includes('url') === false) return {};
+		Client.resetAuthByUserId(relevant.discord.userId);
 		if (Date.now() - relevant.auth.createdAt > (CONSTANTS.milis.milisTime.minute * 15)) {
 			return {};
 		}
-		return query.discord;
+		return relevant.discord;
 	}
 
 	/**
@@ -110,12 +115,12 @@ module.exports = class ServerUtils {
 		const query = await Client.findByPin(pin);
 		if (query.length === 0) return {};
 		const relevant = query.shift();
-		if (!relevant.auth.url) return {};
-		Client.resetAuthByPin(pin);
-		if (Date.now() - relevant.auth.createdAt > (CONSTANTS.milis.milisTime.minute * 15)) {
+		if (Object.keys(relevant.auth).includes('url') === false) return {};
+		Client.resetAuthByUserId(relevant.discord.userId);
+		if (Date.now() - Date(relevant.auth.createdAt) > (CONSTANTS.milis.milisTime.minute * 15)) {
 			return {};
 		}
-		return query.discord;
+		return relevant.discord;
 	}
 
 	/**
@@ -125,11 +130,13 @@ module.exports = class ServerUtils {
 	 * @returns {string} token
 	 */
 	async encryptJWT(data) {
+		console.log('attempting to encrypt ', data);
 		if (data !== Object(data)) {
 			data = { data: data };
 		}
+		console.log(data);
 		return new Promise(resolve => {
-			jwt.sign(data, this.privateKey, { algorithm: 'RS256', expiresIn: '12h' }, (err, token) => {
+			jwt.sign(data.toJSON(), this.privateKey, { algorithm: 'RS256', expiresIn: '12h' }, (err, token) => {
 				if (err) {
 					logger.error(err);
 					resolve('');
@@ -148,7 +155,7 @@ module.exports = class ServerUtils {
 	 */
 	async decryptJWT(token) {
 		return new Promise(resolve => {
-			jwt.verify(token, this.publicKey, (err, decodedData) => {
+			jwt.verify(token, this.publicKey, { algorithms: ['RS256'] }, (err, decodedData) => {
 				if (err) {
 					logger.error(err);
 					resolve({});

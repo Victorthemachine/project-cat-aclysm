@@ -1,22 +1,16 @@
 import themes from './themes';
-import locales from './locales';
+import { locales } from './locales/index';
+import routes from './routes';
+import { Route } from 'react-router';
 
+console.log(routes[0].path, routes[0].exact, routes[0].component);
 const config = {
     locale: {
         locales,
-        defaultLocale: parseLanguages(['en', 'de', 'ru'], 'en'),
-        onError: (e) => {
-            // Here we warn the user about translation error
-            //console.warn(e)
-            return
-        },
+        defaultLocale: 'en',
     },
-    theme: {
-        themes,
-        defaultThemeId: 'default_light',
-        defaultInvertedThemeId: 'default_dark',
-        defaultIsDarkMode: false,
-    },
+    themes,
+    routes: routes.map(el => <Route path={el.path} exact={el.exact} element={el.component} />),
 };
 
 export default config;

@@ -1,7 +1,9 @@
-const themes = [
-    {
-        id: 'default_light',
-        source: {
+import React from 'react';
+import { createTheme } from '@mui/material/styles';
+
+const themes = {
+    main: {
+        light: createTheme({
             palette: {
                 type: 'light',
                 primary: {
@@ -20,11 +22,8 @@ const themes = [
                     secondary: '#8a8da1'
                 },
             }
-        }
-    },
-    {
-        id: 'default_dark',
-        source: {
+        }),
+        dark: createTheme({
             palette: {
                 type: 'dark',
                 primary: {
@@ -43,8 +42,15 @@ const themes = [
                     secondary: 'rgba(255, 255, 255, 0.7)'
                 },
             }
-        }
+        })
     },
-];
+};
+
+export const ThemeContext = React.createContext({
+    id: 'default',
+    isDarkMode: false,
+    toggleTheme: () => {},
+    toggleDarkMode: () => {}
+});
 
 export default themes;

@@ -2,31 +2,34 @@ const BotRoute = require('../structures/BotRoute');
 
 module.exports = class extends BotRoute {
 
-	constructor(...args) {
-		super(...args);
-		this.post('/verify', (req, res) => this.auth(req, res));
-		this.post('/session', (req, res) => this.sessionVerify(req, res));
+	// eslint-disable-next-line no-useless-constructor
+	constructor(client) {
+		super(client);
 	}
 
 	// TODO: add typedefs for the params
 	/**
-     * Authentificates the user.
-     *
-     * @param {*} req
-     * @param {*} res
-     */
-	auth(req, res) {
+	 * Authentificates the user.
+	 *
+	 * @param {*} req
+	 * @param {*} res
+	 */
+	verify(req, res, next) {
 		const responseObj = {
-			auth: false,
-			token: {}
+			auth: false
 		};
 		if (req.body.url) {
 			this.client.serverUtils.verifyUrl(req.body.url)
 				.then(verified => {
-					if (Object(verified).keys().length > 0) {
+					console.log(verified);
+					if (verified && Object.keys(verified).length > 0) {
 						responseObj.auth = true;
-						responseObj.token = verified;
-						res.send(responseObj);
+						this.client.serverUtils.encryptJWT(verified)
+							.then(token => {
+								console.log('encrypted token ', token);
+								res.cookie('nya-bot-jwt', token);
+								res.send(responseObj);
+							});
 					} else {
 						res.send(responseObj);
 					}
@@ -35,11 +38,13 @@ module.exports = class extends BotRoute {
 		} else if (req.body.pin) {
 			this.client.serverUtils.verifyPin(req.body.pin)
 				.then(verified => {
-					if (Object(verified).keys().length > 0) {
+					console.log(verified);
+					if (verified && Object.keys(verified).length > 0) {
 						responseObj.auth = true;
 						this.client.serverUtils.encryptJWT(verified)
 							.then(token => {
-								responseObj.token = token;
+								console.log('encrypted token ', token);
+								res.cookie('nya-bot-jwt', token);
 								res.send(responseObj);
 							});
 					} else {
@@ -54,13 +59,25 @@ module.exports = class extends BotRoute {
 	}
 
 	/**
-     * Try to get the cookie
-     *
-     * @param {*} req
-     * @param {*} res
-     */
-	sessionVerify(req, res) {
-		// TODO: once JWT is in place
+	 * Try to get the cookie
+	 *
+	 * @param {*} req
+	 * @param {*} res
+	 */
+	// eslint-disable-next-line consistent-return
+	sessionVerify(req, res, next) {
+		console.log(req.cookies);
+		if (!Object.keys(req.cookies).includes('nya-bot-jwt')) return res.send({ auth: false });
+		console.log('This is weird ', req.cookies['nya-bot-jwt']);
+		this.client.serverUtils.decryptJWT(req.cookies['nya-bot-jwt'])
+			.then(tokenData => {
+				if (Object.keys(tokenData).length > 0) {
+					return res.send({ auth: true });
+				} else {
+					return res.send({ auth: false });
+				}
+			});
 	}
 
 };
+
