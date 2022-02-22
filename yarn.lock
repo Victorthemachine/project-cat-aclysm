@@ -1429,16 +1429,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.16.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
-  version: 7.17.0
-  resolution: "@babel/runtime@npm:7.17.0"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 1864ac3c6aa061798c706ce858af311f06f6ad6efafc20cca7029fdaa9786c58ccaf5bdb8bd133cb505f27bed7659b65f1503b8da58adbd1eb88f7333644e6ed
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.17.0, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.8.3":
+"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.16.7, @babel/runtime@npm:^7.17.0, @babel/runtime@npm:^7.3.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.3, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
   version: 7.17.2
   resolution: "@babel/runtime@npm:7.17.2"
   dependencies:
@@ -2170,24 +2161,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/private-theming@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "@mui/private-theming@npm:5.3.0"
-  dependencies:
-    "@babel/runtime": ^7.16.7
-    "@mui/utils": ^5.3.0
-    prop-types: ^15.7.2
-  peerDependencies:
-    "@types/react": ^16.8.6 || ^17.0.0
-    react: ^17.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: c33d127d6eb4e92ff6e7a07be16d9be5e17910ad6ad4069ed3875fd1116ad3f71067bdad83b6bc33a126ad8848ece0c68405659a9c68b3f24e738f959f90c671
-  languageName: node
-  linkType: hard
-
-"@mui/private-theming@npm:^5.4.1":
+"@mui/private-theming@npm:^5.3.0, @mui/private-theming@npm:^5.4.1":
   version: 5.4.1
   resolution: "@mui/private-theming@npm:5.4.1"
   dependencies:
@@ -2283,19 +2257,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/types@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "@mui/types@npm:7.1.0"
-  peerDependencies:
-    "@types/react": "*"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 175825cd118e434eb280d9490a9f2afbe45ff50d51053dae5f4866f45f8cf33ab3b2f46b620b5d98bdd4daf00f7f6f51cf77a6ce0c9060256e6ec5448526eb6f
-  languageName: node
-  linkType: hard
-
-"@mui/types@npm:^7.1.1":
+"@mui/types@npm:^7.1.0, @mui/types@npm:^7.1.1":
   version: 7.1.1
   resolution: "@mui/types@npm:7.1.1"
   peerDependencies:
@@ -2307,22 +2269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/utils@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "@mui/utils@npm:5.3.0"
-  dependencies:
-    "@babel/runtime": ^7.16.7
-    "@types/prop-types": ^15.7.4
-    "@types/react-is": ^16.7.1 || ^17.0.0
-    prop-types: ^15.7.2
-    react-is: ^17.0.2
-  peerDependencies:
-    react: ^17.0.0
-  checksum: 50cfc7638aa3fd27d090ef1e881843f00878f204b888307e112a33dc14695e79476e80dabbf948c37db71d94345459557ad6f936259d4b15595ffc03a6a48b9e
-  languageName: node
-  linkType: hard
-
-"@mui/utils@npm:^5.4.1":
+"@mui/utils@npm:^5.3.0, @mui/utils@npm:^5.4.1":
   version: 5.4.1
   resolution: "@mui/utils@npm:5.4.1"
   dependencies:
@@ -7010,17 +6957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0":
-  version: 1.14.7
-  resolution: "follow-redirects@npm:1.14.7"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: f6d03e5e30877431065bca0d1b2e3db93949eb799d368a5c07ea8a4b71205f0349a3f8f0191bf13a07c93885522834dca1dc8e527dc99a772c6911fba24edc5f
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.14.8":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.8":
   version: 1.14.8
   resolution: "follow-redirects@npm:1.14.8"
   peerDependenciesMeta:

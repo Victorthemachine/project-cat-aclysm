@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const AuthRoutes = require('./server/routes/Auth');
+const InfoRoutes = require('./server/routes/Info');
 
 const Client = require('./schematics/Client');
 
@@ -40,8 +41,12 @@ module.exports = class Server {
         app.post('/invite', (req, res) => this.#inviteRoute(req, res));
         const authRoutes = new AuthRoutes(client);
         // TODO: make a module that auto inits all routes, has to loop through class functions though
-        app.use('/auth/session', (req, res, next) => authRoutes.sessionVerify(req, res, next));
-        app.use('/auth/verify', (req, res, next) => authRoutes.verify(req, res, next));
+        app.post('/auth/session', (req, res, next) => authRoutes.sessionVerify(req, res, next));
+        app.post('/auth/verify', (req, res, next) => authRoutes.verify(req, res, next));
+        const infoRoutes = new InfoRoutes(client);
+        app.post('/info/userinfo', (req, res, next) => infoRoutes.fetchUserInfo(req, res, next));
+        app.post('/info/userguilds', (req, res, next) => infoRoutes.fetchUserGuilds(req, res, next));
+        app.post('/info/invite', (req, res, next) => infoRoutes.fetchInvite(req, res, next));
     }
 
     #verifyRoute(req, res) {

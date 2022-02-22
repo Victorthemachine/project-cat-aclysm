@@ -1,7 +1,7 @@
 // In case I or anyone else needs solution for mass translation (which I doubt), but refactoring the code would be simple really
 // So I will leave reference for babel plugin that automates it. File has to be JSON though!
 // https://codeandweb.com/babeledit/tutorials/how-to-translate-your-react-app-with-react-intl
-export const cz_messages = {
+export const cs_messages = {
     welcome: 'Dobré ráno čůráci',
 
     sign_in: 'Authentification step',
@@ -13,4 +13,12 @@ export const cz_messages = {
     password: 'Password',
     submit_pin: 'Submit',
     to_discord: 'Open Discord',
+
+    dashboard: 'Kontrolní panel',
+    invite_alert_title: 'Pozvánka',
+    invite_alert_success: 'Byla vytvořena pozvánka. Je zkopírovaná do schránky!',
+    invite_alert_error: 'Nepodařilo se vytvořit pozvánku. Možná se Vám změnily pravomoce?',
+
+    guild_position: 'Vaše postavení je:',
+    owner: 'Vlastník:',
 }

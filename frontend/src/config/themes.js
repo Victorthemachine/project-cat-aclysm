@@ -1,9 +1,9 @@
 import React from 'react';
-import { createTheme } from '@mui/material/styles';
+//import { createTheme } from '@mui/material/styles';
 
 const themes = {
     main: {
-        light: createTheme({
+        light: {
             palette: {
                 type: 'light',
                 primary: {
@@ -22,8 +22,8 @@ const themes = {
                     secondary: '#8a8da1'
                 },
             }
-        }),
-        dark: createTheme({
+        },
+        dark: {
             palette: {
                 type: 'dark',
                 primary: {
@@ -42,7 +42,7 @@ const themes = {
                     secondary: 'rgba(255, 255, 255, 0.7)'
                 },
             }
-        })
+        }
     },
 };
 

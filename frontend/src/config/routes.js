@@ -1,6 +1,8 @@
 import React, { lazy } from 'react';
 import AuthorizedRoute from '../pages/Auth/AuthorizedRoute';
 import LoginRoute from '../pages/Auth/LoginRoute';
+//Test delete later
+import { Button, Typography, Paper } from '@mui/material';
 
 const Landing = lazy(() => import('../pages/Landing/Landing'));
 const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
@@ -22,7 +24,12 @@ const routes = [
         component: (
             <AuthorizedRoute>
                 <Dashboard>
-                    <AppBar />
+                    <AppBar>
+                        <Paper>
+                            <Button variant="contained">I am an experiment</Button>
+                            <Typography>Me too!</Typography>
+                        </Paper>
+                    </AppBar>
                 </Dashboard>
             </AuthorizedRoute>
         )

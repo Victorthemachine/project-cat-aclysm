@@ -109,7 +109,7 @@ const Signin = () => {
                         onClick={handleClickShowPin}
                     />
                 </div>
-                <Tooltip open={entryPin.length !== 10 && entryPin.length !== 0 ? true : false} title="Pin must be 10 characters long">
+                <Tooltip open={entryPin.length !== 10 && entryPin.length !== 0 ? true : false} title={intl.formatMessage({ id: 'invalid_entry_pin' })}>
                     <span>
                         <Button
                             type="submit"

@@ -1,4 +1,7 @@
-/* eslint-disable semi */
+
+// Docs
+const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, CategoryChannel, Collection, Message, TextChannel } = require('discord.js');
+// =============
 const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
@@ -13,9 +16,14 @@ const Event = require('../Event.js');
 // Configuration
 const Reactions = require('./../../configuration/reactions.json');
 const CONSTANTS = require('./../../configuration/botConstants');
-// Docs
-const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, CategoryChannel, Collection, Message, TextChannel } = require('discord.js');
-// =============
+const MOD_PERMISSIONS = new Permissions(
+	Permissions.FLAGS.MANAGE_MESSAGES,
+	Permissions.FLAGS.MANAGE_ROLES,
+	Permissions.FLAGS.KICK_MEMBERS,
+	Permissions.FLAGS.BAN_MEMBERS,
+	Permissions.FLAGS.VIEW_AUDIT_LOG,
+	Permissions.FLAGS.MANAGE_NICKNAMES
+)
 
 const { reactToThis } = Reactions;
 
@@ -341,7 +349,7 @@ module.exports = class Util {
 	 * @param {number.Integer} index
 	 * @returns {Collection<Message>}
 	 */
-	 async #loopUtil(channels, amount, scope, messageFilter, messageCollection = new Collection(), index = 0) {
+	async #loopUtil(channels, amount, scope, messageFilter, messageCollection = new Collection(), index = 0) {
 		console.log(channels.length, index);
 		if (index === channels.length) return messageCollection;
 		messageCollection = messageCollection.concat(await this.#fetchUtil(channels[index], amount, scope, messageFilter));
@@ -629,6 +637,109 @@ module.exports = class Util {
 		} else {
 			return '';
 		}
+	}
+
+	async fetchUserGuilds(userId) {
+		const user = this.client.users.cache.get(userId);
+		if (!user || Object.keys(user).length === 0) return [];
+		const mutualGuilds = this.client.guilds.cache.filter(guild => guild.members.cache.has(userId)).map(guild => guild);
+		console.log(mutualGuilds.map(guild => guild.name));
+		const userGuildInfoObj = await this.determineUserStandingInGuilds(user, mutualGuilds);
+		// Dunno how it works rn, but if they return iterable it could be chained like a builder I think
+		// TODO: do that ^
+		const enableFunctions = await this.determineAvailibleFunctions(user, userGuildInfoObj);
+		// If necessary can add more data here
+		return userGuildInfoObj;
+	}
+
+	async determineUserStandingInGuilds(user, guilds) {
+		return new Promise(resolve => {
+			if (Array.isArray(guilds) === false) throw TypeError(`Guilds must be array, received ${typeof guilds}`);
+			if (guilds.length === 0) return resolve({});
+			// simple way to sync up async func. Doesn't matter in this case since the function is already in async loop
+			// so it doesn't impact performance
+			let syncCounter = 0;
+			const returnObj = {};
+			const populateReturnObj = (position, guild, member) => {
+				console.log('Populating the response');
+				syncCounter++;
+				guild.members.fetch(guild.ownerId)
+					.then(owner => {
+						returnObj[guild.name] = {
+							guildId: guild.id,
+							guildAvatar: guild.iconURL({ dynamic: true }),
+							owner: {
+								id: owner.id,
+								avatar: owner.displayAvatarURL({ dynamic: true }),
+								name: owner.user.username,
+								discriminator: owner.user.discriminator
+							},
+							position: position,
+							invite: {
+								allowed: member.permissions.has(Permissions.FLAGS.CREATE_INSTANT_INVITE)
+							}
+						}
+						console.log(returnObj[guild.name]);
+						if (syncCounter === guilds.length) return resolve(returnObj);
+					})
+			}
+			guilds.forEach(guild => {
+				guild.members.fetch(user)
+					.then(member => {
+						let position = 'Member';
+						if (guild.ownerId === user.id) {
+							position = 'Owner';
+						} else if (member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+							position = 'Admin';
+						} else if (member.permissions.missing(MOD_PERMISSIONS, false).length === 0) {
+							position = 'Mod'
+						}
+						return populateReturnObj(position, guild, member);
+					})
+			})
+
+		})
+	}
+
+	async determineAvailibleFunctions(user, guildObj) {
+		// TODO: when I have the time, investigate efficient deep cloning
+		// I just can't bring myself to do the JSON.parse with stringify
+		// also maybe move invite over here as well... makes more sense
+		const allFunctions = {
+
+		}
+		return new Promise(resolve => {
+			for (let guild in guildObj) {
+				if (guildObj[guild].position === 'Owner') {
+					
+				}
+			}
+		})
+	}
+
+	// REST API only func
+	async fetchGuildInvite(userId, guildId) {
+		return new Promise(resolve => {
+			const guild = this.client.guilds.cache.get(guildId);
+			if (!guild) resolve({});
+			guild.members.fetch(userId)
+				.then(member => {
+					if (guild.systemChannel.permissionsFor(member).has(Permissions.FLAGS.CREATE_INSTANT_INVITE) === true) {
+						guild.invites.create(guild.systemChannel, { maxAge: 0, maxUses: 0 })
+							.then(invite => {
+								resolve({ invite: invite.url });
+							})
+							.catch(err => {
+								logger.error(err);
+								resolve({});
+							});
+					}
+				})
+				.catch(err => {
+					logger.error(err);
+					resolve({});
+				})
+		})
 	}
 
 };

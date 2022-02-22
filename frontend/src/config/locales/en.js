@@ -13,4 +13,12 @@ export const en_messages = {
     password: 'Password',
     submit_pin: 'Submit',
     to_discord: 'Open Discord',
+
+    dashboard: 'Dashboard',
+    invite_alert_title: 'Invite',
+    invite_alert_success: 'Successfully created invite. It is copied to your clipboard!',
+    invite_alert_error: `Couldn't create invite. Perhaps your permissions changed?`,
+
+    guild_position: 'Your standing is:',
+    owner: 'Owner:',
 }
