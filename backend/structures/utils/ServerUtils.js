@@ -31,7 +31,7 @@ module.exports = class ServerUtils {
 		this.publicKey = publicKey;
 		this.privateKey = privateKey;
 		try {
-			Client.collection.drop();
+			//Client.collection.drop();
 		} catch (err) {
 			logger.warn('Client collection is already empty');
 		}

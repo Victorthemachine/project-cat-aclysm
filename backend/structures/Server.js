@@ -8,6 +8,7 @@ const cors = require('cors');
 
 const AuthRoutes = require('./server/routes/Auth');
 const InfoRoutes = require('./server/routes/Info');
+const ManageRoutes = require('./server/routes/Manage');
 
 const Client = require('./schematics/Client');
 
@@ -47,6 +48,9 @@ module.exports = class Server {
         app.post('/info/userinfo', (req, res, next) => infoRoutes.fetchUserInfo(req, res, next));
         app.post('/info/userguilds', (req, res, next) => infoRoutes.fetchUserGuilds(req, res, next));
         app.post('/info/invite', (req, res, next) => infoRoutes.fetchInvite(req, res, next));
+        app.post('/info/selfroles', (req, res, next) => infoRoutes.fetchSelfAssignRoles(req, res, next));
+        const manageRoutes = new ManageRoutes(client);
+        app.post('/manage/updateroles', (req, res, next) => manageRoutes.updateAccessibleRoles(req, res, next));
     }
 
     #verifyRoute(req, res) {

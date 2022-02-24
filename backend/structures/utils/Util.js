@@ -1,11 +1,12 @@
 
 // Docs
-const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, CategoryChannel, Collection, Message, TextChannel } = require('discord.js');
+const { Permissions, Channel, Constants: { ChannelTypes }, Guild, GuildChannel, CategoryChannel, Collection, Message, TextChannel, Role } = require('discord.js');
 // =============
 const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
 const logger = require('./../Logger');
+const ServerConfig = require('./../schematics/ServerConfig');
 
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -639,6 +640,16 @@ module.exports = class Util {
 		}
 	}
 
+	/**
+	 * Verifies if client can assign this role.
+	 * 
+	 * @param {Role} role any guildrole
+	 * @returns {boolean} can assign role
+	 */
+	verifyRolePosition(role) {
+		return (role.guild.members.cache.get(this.client.user.id)).roles.highest.comparePositionTo(role) > 0 ? true : false;
+	}
+
 	async fetchUserGuilds(userId) {
 		const user = this.client.users.cache.get(userId);
 		if (!user || Object.keys(user).length === 0) return [];
@@ -649,7 +660,7 @@ module.exports = class Util {
 		// TODO: do that ^
 		const enableFunctions = await this.determineAvailibleFunctions(user, userGuildInfoObj);
 		// If necessary can add more data here
-		return userGuildInfoObj;
+		return enableFunctions;
 	}
 
 	async determineUserStandingInGuilds(user, guilds) {
@@ -702,17 +713,83 @@ module.exports = class Util {
 	}
 
 	async determineAvailibleFunctions(user, guildObj) {
-		// TODO: when I have the time, investigate efficient deep cloning
-		// I just can't bring myself to do the JSON.parse with stringify
-		// also maybe move invite over here as well... makes more sense
-		const allFunctions = {
-
-		}
 		return new Promise(resolve => {
+			let syncCounter = 0;
+			const populateGuildObj = (guildName, funcObj) => {
+				syncCounter++;
+				guildObj[guildName].userPerms = funcObj;
+				if (syncCounter === Object.keys(guildObj).length) return resolve(guildObj);
+			}
+
+			const checkPerms = async (guildName, guildId, funcObj) => {
+				const guild = this.client.guilds.cache.get(guildId);
+				const member = await guild.members.fetch(user);
+				// TODO: automate checks
+				funcObj.manage.roles = member.permissions.has(Permissions.FLAGS.MANAGE_ROLES);
+				console.log('===============Mongo test===============');
+				console.log('Somethings fishy')
+				console.log(await ServerConfig.find({}));
+				console.log(ServerConfig.checkServerRolesAccessByGuildId(guildId).get('memberRoles.selfAssign'))
+				console.log((await ServerConfig.checkServerRolesAccessByGuildId(guildId)).memberRoles.selfAssign)
+				console.log('I hope this works');
+				const roles = [];
+				const rolesData = (await ServerConfig.checkServerRolesAccessByGuildId(guildId)).memberRoles.selfAssign;
+				if (rolesData.any.length > 0) roles.push('any');
+				roles.concat(rolesData.specific.map(el => el.roleId));
+				console.log(roles);
+				console.log('=====Mongo test 2 electric boogaloo=====');
+				const actualManualQuery = await ServerConfig.findOne({ guildId: guildId });
+				console.log(actualManualQuery.memberRoles.selfAssign.any);
+				console.log(actualManualQuery.memberRoles.selfAssign.specific);
+				ServerConfig.findOne({ guildId: "782596167158333460" }, function (err, serverConfig) {
+					if (err) console.error(err);
+					console.log(serverConfig);
+				})
+				console.log('========================================')
+				populateGuildObj(guildName, funcObj);
+				return;
+			}
+
+			const checkAccessibleRoles = async (guildId, funcObj) => {
+				const roles = [];
+				const document = await ServerConfig.getByGuildId(guildId);
+				if (!document) return funcObj;
+				console.log('Data for ', guildId);
+				const rolesData = document.memberRoles.selfAssign;
+				console.log(rolesData.any);
+				console.log(rolesData.specific)
+				if (rolesData.any.length > 0) roles.push('any');
+				funcObj.roles = roles.concat(rolesData.specific.map(el => el.roleId));
+				return funcObj;
+			}
+
+			guildLoop:
 			for (let guild in guildObj) {
-				if (guildObj[guild].position === 'Owner') {
-					
+				// TODO: when I have the time, investigate efficient deep cloning
+				// I just can't bring myself to do the JSON.parse with stringify
+				// also maybe move invite over here as well... makes more sense
+				const allFunctions = {
+					manage: {
+						// All stuff admin
+						roles: false
+					},
+					// Are there roles to pick?
+					roles: [],
+
 				}
+
+				if (guildObj[guild].position === 'Owner') {
+					for (let i in allFunctions.manage) allFunctions.manage[i] = true;
+					checkAccessibleRoles(guildObj[guild].guildId, allFunctions)
+						.then(obj => {
+							populateGuildObj(guild, obj);
+						})
+					continue guildLoop;
+				}
+				checkAccessibleRoles(guildObj[guild].guildId, allFunctions)
+					.then(obj => {
+						checkPerms(guild, guildObj[guild].guildId, obj);
+					})
 			}
 		})
 	}
@@ -739,6 +816,101 @@ module.exports = class Util {
 					logger.error(err);
 					resolve({});
 				})
+		})
+	}
+
+	/**
+	 * 
+	 * @param {string} guildId 
+	 * @param {{ "any"|"specific": [string|{ "roleId": string, "roles": [string] }] }} roles 
+	 */
+	updateAccessibleRoles(guildId, roles) {
+		return new Promise(async resolve => {
+			/*ServerConfig.updateAccessibleRolesByGuildId(guildId, roles)
+				.then(() => {
+					return resolve('finished');
+				})*/
+			/*ServerConfig.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } }, { upsert: true, new: true }, (err, newDoc) => {
+				if (err) {
+					logger.error(err);
+					resolve('fail');
+				} else {
+					console.log(newDoc.memberRoles.selfAssign.any);
+					console.log(newDoc.memberRoles.selfAssign.specific);
+					resolve('finished');
+				}
+			});*/
+			console.log('Did I catch the fuckwit?');
+			console.log(roles);
+			const any = roles.any ? roles.any : [];
+			const specific = roles.specific ? roles.specific : [];
+			console.log('Mmh this update');
+			const newDoc = await ServerConfig.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign.any': any, 'memberRoles.selfAssign.specific': specific } }, { upsert: true, new: true });
+			resolve(newDoc);
+		})
+	}
+
+	fetchSelfAssignableRoles(guildId, user) {
+		console.log('==============Depression time==============');
+		return new Promise(resolve => {
+			let guild, member, guildConfRoles, guildAllRoles = '';
+			const load = async () => {
+				guild = await this.client.guilds.fetch(guildId);
+				member = await guild.members.fetch(user);
+				guildConfRoles = (await ServerConfig.getByGuildId(guildId)).memberRoles.selfAssign;
+				guildAllRoles = await guild.roles.fetch();
+				return;
+			}
+			load()
+				.then(() => {
+					console.log(guildConfRoles);
+					let roles = [];
+					const basicRoleFilter = (role) => {
+						if (!role) return false
+						console.log(role ? true : false);
+						console.log(this.verifyRolePosition(role) === true ? true : false);
+						console.log(!role.tags ? true : false);
+						return (this.verifyRolePosition(role) === true && !role.tags) ? true : false;
+					}
+					if (guildConfRoles.any.length > 0) roles = roles.concat(guildConfRoles.any.map(el => {
+						console.log(guildAllRoles.size);
+						console.log(el);
+						const role = guildAllRoles.get(el);
+						console.log(role);
+						console.log(el, ' => ', basicRoleFilter(role));
+						if (basicRoleFilter(role) === true) {
+							return {
+								name: role.name,
+								color: role.hexColor,
+								avatar: role.icon,
+							}
+						} else return;
+					}))
+					let temp = [];
+					if (guildConfRoles.specific.length > 0) guildConfRoles.specific.forEach(el => {
+						console.log(el.roleId, ' >>> ', member.roles.cache.has(el.roleId));
+						if (member.roles.cache.has(el.roleId) === true) {
+							const role = guildAllRoles.get(el.roleId);
+							console.log(el.roleId, ' => ', basicRoleFilter(role));
+							if (basicRoleFilter(role) === true) {
+								temp = temp.concat(el.roles.map(id => {
+									const mapEl = guildAllRoles.get(id);
+									console.log(id, ' ==>> ', basicRoleFilter(mapEl));
+									if (basicRoleFilter(mapEl) === true) {
+										return {
+											name: mapEl.name,
+											color: mapEl.hexColor,
+											avatar: mapEl.icon,
+			
+										}
+									} else return;
+								}))
+							}
+						}
+					});
+					console.log('===========================================');
+					return resolve((roles.concat(temp)).filter(el => el ? true : false));		
+				})	
 		})
 	}
 
