@@ -19,7 +19,7 @@ const routes = [
         )
     },
     {
-        path: '/dashboard',
+        path: '/dashboard/*',
         exact: false,
         component: (
             <AuthorizedRoute>

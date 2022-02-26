@@ -20,5 +20,14 @@ export const en_messages = {
     invite_alert_error: `Couldn't create invite. Perhaps your permissions changed?`,
 
     guild_position: 'Your standing is:',
+    invite_btn: "Invite",
+    manage_btn: "Manage",
+    roles_btn: "Roles",
     owner: 'Owner:',
+    
+    role_header: 'Roles for you in',
+    submit_roles: 'Submit',
+
+    manage_role_list_header: 'Set rules for roles',
+    manage_submit_btn: 'Apply changes'
 }

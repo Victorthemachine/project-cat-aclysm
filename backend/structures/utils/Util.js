@@ -881,8 +881,10 @@ module.exports = class Util {
 						if (basicRoleFilter(role) === true) {
 							return {
 								name: role.name,
+								id: el,
 								color: role.hexColor,
 								avatar: role.icon,
+								claimed: member.roles.cache.has(el)
 							}
 						} else return;
 					}))
@@ -899,9 +901,10 @@ module.exports = class Util {
 									if (basicRoleFilter(mapEl) === true) {
 										return {
 											name: mapEl.name,
+											id: id,
 											color: mapEl.hexColor,
 											avatar: mapEl.icon,
-			
+											claimed: member.roles.cache.has(id)
 										}
 									} else return;
 								}))
@@ -909,8 +912,193 @@ module.exports = class Util {
 						}
 					});
 					console.log('===========================================');
-					return resolve((roles.concat(temp)).filter(el => el ? true : false));		
-				})	
+					return resolve((roles.concat(temp)).filter(el => el ? true : false));
+				})
+		})
+	}
+
+	/**
+	 * 
+	 * @param {*} guildId 
+	 * @param {*} user 
+	 * @param {[string]} roles that have been modified. Remove/Add is auto determined 
+	 * @returns 
+	 */
+	applySelfAssignableRoles(guildId, user, roles) {
+		return new Promise(resolve => {
+			console.log('=============applySelfAssignableRoles=============');
+			let guild, member, guildConfRoles, guildAllRoles = '';
+			const rejects = [];
+			const add = [];
+			const remove = [];
+			const load = async () => {
+				guild = await this.client.guilds.fetch(guildId);
+				member = await guild.members.fetch(user);
+				guildConfRoles = (await ServerConfig.getByGuildId(guildId)).memberRoles.selfAssign;
+				guildAllRoles = await guild.roles.fetch();
+				if (member.permissions.has(Permissions.FLAGS.MANAGE_ROLES)) {
+					guildConfRoles.any = guildConfRoles.any.concat(
+						(guildAllRoles.filter(el => el.comparePositionTo(member.roles.highest) < 0 ? true : false)).map(role => role.id)
+					);
+				}
+				return;
+			}
+			load()
+				.then(() => {
+					roles.forEach(roleId => {
+						const role = guildAllRoles.get(roleId);
+						console.log(roleId, ' => ', role ? true : false);
+						if (!role) {
+							rejects.push(roleId);
+							return;
+						}
+						// Yes these two checks are same, but second one is expensive, so it's better to limit amount of times it's called
+						if (guildConfRoles.any.includes(roleId) === true) {
+							if (this.verifyRolePosition(role) === true) {
+								if (member.roles.cache.has(roleId) === false) {
+									add.push(roleId);
+								} else {
+									remove.push(roleId);
+								}
+							} else {
+								rejects.push(roleId);
+								return;
+							}
+						} else if ((guildConfRoles.specific.filter(el => (el.roles.includes(roleId) === true && member.roles.cache.has(el.roleId) === true) ? true : false)).length > 0) {
+							if (this.verifyRolePosition(role) === true) {
+								if (member.roles.cache.has(roleId) === false) {
+									add.push(roleId);
+								} else {
+									remove.push(roleId);
+								}
+							} else {
+								rejects.push(roleId);
+								return;
+							}
+						} else {
+							rejects.push(roleId);
+							return;
+						}
+					})
+					console.log(add, remove, rejects);
+					if (add.length > 0) {
+						member.roles.add(add)
+							.then((memberUpdate) => {
+								console.log('Added ', add.length, ' roles');
+								console.log(memberUpdate.roles.cache.has(add[0]) === true ? 'That\'s right' : 'You dirty liar');
+								if (remove.length > 0) {
+									memberUpdate.roles.remove(remove)
+										.then((memberUpdate) => {
+											console.log('Removed ', remove.length, ' roles');
+											console.log(memberUpdate.roles.cache.has(remove[0]) === false ? 'That\'s right' : 'You dirty liar');
+										})
+										.catch(err => {
+											console.log('Stuff went haywire');
+											console.error(err);
+										})
+								}
+							})
+							.catch(err => {
+								console.log('Stuff went haywire');
+								console.error(err);
+							})
+					} else if (remove.length > 0) {
+						member.roles.remove(remove)
+							.then((memberUpdate) => {
+								console.log('Removed ', remove.length, ' roles');
+								console.log(memberUpdate.roles.cache.has(remove[0]) === false ? 'That\'s right' : 'You dirty liar');
+							})
+							.catch(err => {
+								console.log('Stuff went haywire');
+								console.error(err);
+							})
+					}
+					console.log('==================================================');
+					return resolve(rejects);
+				});
+		});
+	}
+
+	fetchAllRolesForManage(guildId, user) {
+		console.log('==============Depression time 2==============');
+		return new Promise(resolve => {
+			let guild, member, guildConfRoles, guildAllRoles = '';
+			const load = async () => {
+				guild = await this.client.guilds.fetch(guildId);
+				member = await guild.members.fetch(user);
+				guildConfRoles = (await ServerConfig.getByGuildId(guildId)).memberRoles.selfAssign;
+				guildAllRoles = await guild.roles.fetch();
+				return;
+			}
+			load()
+				.then(() => {
+					console.log(guildConfRoles);
+					let roles = [];
+					const basicRoleFilter = (role) => {
+						if (!role) return false
+						console.log(role ? true : false);
+						console.log(this.verifyRolePosition(role) === true ? true : false);
+						console.log(!role.tags ? true : false);
+						return (this.verifyRolePosition(role) === true && !role.tags) ? true : false;
+					}
+					if (guildConfRoles.any.length > 0) roles = roles.concat(guildConfRoles.any.map(el => {
+						console.log(guildAllRoles.size);
+						console.log(el);
+						const role = guildAllRoles.get(el);
+						console.log(role);
+						console.log(el, ' => ', basicRoleFilter(role));
+						if (basicRoleFilter(role) === true && member.roles.highest.comparePositionTo(role) > 0) {
+							return {
+								name: role.name,
+								id: el,
+								color: role.hexColor,
+								avatar: role.icon,
+								category: 'any'
+							}
+						} else return;
+					}))
+					let temp = [];
+					if (guildConfRoles.specific.length > 0) guildConfRoles.specific.forEach(el => {
+						console.log(el.roleId, ' >>> ', member.roles.cache.has(el.roleId));
+						const role = guildAllRoles.get(el.roleId);
+						console.log(el.roleId, ' => ', basicRoleFilter(role));
+						if (basicRoleFilter(role) === true && member.roles.highest.comparePositionTo(role) > 0) {
+							temp = temp.concat(el.roles.map(id => {
+								const mapEl = guildAllRoles.get(id);
+								console.log(id, ' ==>> ', basicRoleFilter(mapEl));
+								if (basicRoleFilter(mapEl) === true && member.roles.highest.comparePositionTo(mapEl) > 0) {
+									return {
+										name: mapEl.name,
+										id: id,
+										color: mapEl.hexColor,
+										avatar: mapEl.icon,
+										category: 'specific',
+										parent: el.roleId,
+										parentName: role.name
+									}
+								} else return;
+							}))
+						}
+					});
+					roles = roles.concat(temp);
+					console.log('=============================================');
+					return resolve(((roles).filter(el => el ? true : false)).concat((guildAllRoles.filter(role => {
+						if (role.name === '@everyone' || roles.filter(el => {
+							if (!el) return false;
+							if (el.id === role.id) return true;
+						}).length > 0) return false
+						if (basicRoleFilter(role) === false || member.roles.highest.comparePositionTo(role) < 0) return false;
+						return true;
+					})).map(el => {
+						return {
+							name: el.name,
+							id: el.id,
+							color: el.hexColor,
+							avatar: el.icon,
+							category: 'unassigned',
+						}
+					})));
+				})
 		})
 	}
 

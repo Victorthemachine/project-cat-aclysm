@@ -20,5 +20,14 @@ export const cs_messages = {
     invite_alert_error: 'Nepodařilo se vytvořit pozvánku. Možná se Vám změnily pravomoce?',
 
     guild_position: 'Vaše postavení je:',
+    invite_btn: "Pozvat",
+    manage_btn: "Administrace",
+    roles_btn: "Role",
     owner: 'Vlastník:',
+
+    role_header: 'Role pro Vás v',
+    submit_roles: 'Potvrdit',
+
+    manage_role_list_header: 'Nastavit pravidla pro role',
+    manage_submit_btn: 'Aplikovat změny'
 }

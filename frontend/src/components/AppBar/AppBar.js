@@ -15,11 +15,14 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
 import { Drawer } from '@mui/material';
+import { Route, Routes } from 'react-router-dom';
 
 import { ThemeContext } from '../../config/themes';
 import { LocaleContext } from '../../config/locales/index';
 import UserCard from '../UserCard/UserCard';
 import ServerCard from '../ServerCard/ServerCard';
+import RolePage from '../../subpages/RolePage';
+import ManagePage from '../../subpages/ManagePage';
 
 // TODO: learn breakpoints so it's responsive even on mobile
 export default function ButtonAppBar(props) {
@@ -29,6 +32,7 @@ export default function ButtonAppBar(props) {
     const [userGuilds, setUserGuilds] = React.useState([]);
     const [showAlert, setShowAlert] = React.useState(false);
     const [alertSuccess, setAlertSuccess] = React.useState(false);
+    const [guildInformation, setGuildInformation] = React.useState();
 
     if (showAlert === true) setTimeout(() => setShowAlert(false), 5000);
 
@@ -51,6 +55,7 @@ export default function ButtonAppBar(props) {
                     temp.push(<ServerCard popAlert={setShowAlert} alertType={setAlertSuccess} serverInfo={{ ...res.data[guildName], name: guildName }} />);
                 }
                 setUserGuilds(temp);
+                setGuildInformation(res.data);
             })
             .then(err => {
                 //Dunno promt maybe?
@@ -118,24 +123,30 @@ export default function ButtonAppBar(props) {
                 <Collapse sx={{ zIndex: (theme) => theme.zIndex.appBar + 2 }} in={showAlert}>
                     <Alert severity={alertSuccess === true ? "success" : "error"}>
                         <AlertTitle>{intl.formatMessage({ id: 'invite_alert_title' })}</AlertTitle>
-                        {intl.formatMessage({ id: `${alertSuccess === true ? 'invite_alert_success' : 'invite_alert_error'}`})}
+                        {intl.formatMessage({ id: `${alertSuccess === true ? 'invite_alert_success' : 'invite_alert_error'}` })}
                     </Alert>
                 </Collapse>
-                <Grid
-                    container
-                    sx={{ flexGrow: 1 }}
-                    spacing={4}
-                    justifyContent="center"
-                    alignItems="stretch"
-                >
-                    {userGuilds.map(el => {
-                        return (
-                            <Grid item xs={12} md={2}>
-                                {el}
-                            </Grid>
-                        )
-                    })}
-                </Grid>
+                <Routes>
+                    <Route path="/" exact element={
+                        <Grid
+                            container
+                            sx={{ flexGrow: 1 }}
+                            spacing={4}
+                            justifyContent="center"
+                            alignItems="stretch"
+                        >
+                            {userGuilds.map(el => {
+                                return (
+                                    <Grid item xs={12} md={2}>
+                                        {el}
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                    } />
+                    <Route path="/roles" element={<RolePage guildInformation={guildInformation} />} />
+                    <Route path="/manage" element={<ManagePage serverInfo={guildInformation} />} />
+                </Routes>
                 {props.children}
             </div>
         </>

@@ -49,8 +49,10 @@ module.exports = class Server {
         app.post('/info/userguilds', (req, res, next) => infoRoutes.fetchUserGuilds(req, res, next));
         app.post('/info/invite', (req, res, next) => infoRoutes.fetchInvite(req, res, next));
         app.post('/info/selfroles', (req, res, next) => infoRoutes.fetchSelfAssignRoles(req, res, next));
+        app.post('/info/manageroles', (req, res, next) => infoRoutes.fetchManageRoles(req, res, next));
         const manageRoutes = new ManageRoutes(client);
         app.post('/manage/updateroles', (req, res, next) => manageRoutes.updateAccessibleRoles(req, res, next));
+        app.post('/manage/applyroles', (req, res, next) => manageRoutes.updateSelfRoles(req, res, next));
     }
 
     #verifyRoute(req, res) {

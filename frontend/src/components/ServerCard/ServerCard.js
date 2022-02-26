@@ -1,11 +1,15 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { Avatar, Card, CardHeader, CardActions, Button, Typography } from '@mui/material';
 
 const UserCard = ({ serverInfo, popAlert, alertType }) => {
     const intl = useIntl();
+    const navigate = useNavigate();
+    const params = { guild: serverInfo.guildId };
+
     const handleInvite = () => {
         // TODO: gotta add invite action here
         console.log(`Trying to invite ppl to ${serverInfo.name} with ID:${serverInfo.guildId}`);
@@ -27,6 +31,12 @@ const UserCard = ({ serverInfo, popAlert, alertType }) => {
                 //Dunno promt maybe?
             });
     }
+    const handleRedirect = (pathname) => {
+        navigate({
+            pathname: `/dashboard/${pathname}`,
+            search: `?${createSearchParams(params)}`,
+          });    
+    }
 
     return (
         <Card variant="outlined" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -39,16 +49,37 @@ const UserCard = ({ serverInfo, popAlert, alertType }) => {
             <Typography>
                 {`${intl.formatMessage({ id: 'guild_position' })} ${serverInfo.position}`}
             </Typography>
-            <CardActions>
+            <CardActions >
                 {/*Might need to add tooltip here*/}
-                <Button
-                    size="large"
-                    variant="contained"
-                    onClick={handleInvite}
-                    disabled={serverInfo.invite.allowed === 'true' ? true : false}
-                >
-                    Invite
-                </Button>
+                <div style={{ display: 'grid'}}>
+                    <Button
+                        sx={{ width: 1 }}
+                        size="large"
+                        variant="contained"
+                        onClick={handleInvite}
+                        disabled={serverInfo.invite.allowed === true ? false : true}
+                    >
+                        {intl.formatMessage({ id: "invite_btn" })}
+                    </Button>
+                    <Button
+                        sx={{ width: 1 }}
+                        size="large"
+                        variant="contained"
+                        onClick={() => handleRedirect('manage')}
+                        disabled={(Object.values(serverInfo.userPerms.manage).filter(el => el === true)).length === 0}
+                    >
+                        {intl.formatMessage({ id: "manage_btn" })}
+                    </Button>
+                    <Button
+                        sx={{ width: 1 }}
+                        size="large"
+                        variant="contained"
+                        onClick={() => handleRedirect('roles')}
+                        disabled={serverInfo.userPerms.roles.length === 0}
+                    >
+                        {intl.formatMessage({ id: "roles_btn" })}
+                    </Button>
+                </div>
             </CardActions>
             <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography>
