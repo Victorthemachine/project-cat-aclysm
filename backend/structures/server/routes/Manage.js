@@ -1,4 +1,6 @@
+const logger = require('../../Logger');
 const BotRoute = require('../structures/BotRoute');
+const { Permissions } = require('discord.js');
 
 module.exports = class extends BotRoute {
 

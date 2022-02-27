@@ -33,9 +33,6 @@ module.exports = class extends SlashCommand {
 	}
 
 	async execute(interaction, args) {
-		// FIXME: Needs arguments to modify length etc.
-		// TODO: Add modificitations based on guild setting, create inv, ask for inv, deny inv; (direct inv)
-
 		// Init defaults/user selects
 		// Maybe make guild set default fallbacks? Although I don't really see the point
 		console.log(args.timeout);

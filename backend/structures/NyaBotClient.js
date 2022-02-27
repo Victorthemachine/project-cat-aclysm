@@ -64,6 +64,8 @@ module.exports = class NyaBotClient extends Client {
 		this.db.connect();
 
 		this.player = new MusicPlayer(this);
+
+		this.spamLog = {};
 	}
 
 	validate(options) {

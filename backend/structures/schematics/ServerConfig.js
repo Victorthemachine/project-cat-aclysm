@@ -63,8 +63,10 @@ const serverConfigSchema = new mongoose.Schema({
 				roles: [String]
 			}]
 		}
+	},
+	admin: {
+		muteRole: String
 	}
-
 });
 
 async function verifyEntry(instance, guildId) {
@@ -150,6 +152,16 @@ serverConfigSchema.statics.updateAccessibleRolesByGuildId = function (guildId, r
 	});*/
 
 	return this.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } }, { upsert: true, new: true });
+};
+
+// eslint-disable-next-line func-names
+serverConfigSchema.statics.updateMuteRole = function (guildId, muteRoleId) {
+	return this.findOneAndUpdate({ guildId: guildId }, { $set: { 'admin.muteRole': muteRoleId } }, { upsert: true, new: true });
+};
+
+// eslint-disable-next-line func-names
+serverConfigSchema.statics.getMuteRole = function (guildId) {
+	return this.findOne({ guildId: guildId });
 };
 
 const ServerConfig = mongoose.model('serverconfig', serverConfigSchema, 'serverconfig');
