@@ -78,7 +78,6 @@ module.exports = class Util {
 				const slashCommand = {
 					data: command.toJSON()
 				};
-				console.log(slashCommand);
 				this.client.slashCommands.set(slashCommand.data.name, command);
 			}
 		});
@@ -87,14 +86,10 @@ module.exports = class Util {
 	async registerSlashCommands(token, clientId, global) {
 		const rest = new REST({ version: '9' }).setToken(token);
 		try {
-			console.log('Started refreshing application (/) commands.');
-
 			await rest.put(
 				Routes.applicationGuildCommands(clientId, '782596167158333460'),
 				{ body: this.client.slashCommands }
 			);
-
-			console.log('Successfully reloaded application (/) commands.');
 		} catch (error) {
 			console.error(error);
 		}
@@ -113,28 +108,6 @@ module.exports = class Util {
 				event.emitter[event.type](name, (...args) => event.run(...args));
 			}
 		});
-	}
-
-	/**
-	 * TODO: Rewrite this with the new role command
-	 * @param {*} str
-	 * @param {*} pos
-	 * @returns
-	 */
-	getContent(str, pos) {
-		if (pos === 'undefined') pos = 1;
-		const temp = str.split(' ');
-		const array = new Array(temp.length - pos);
-		for (let i = 0; i < pos; i++) {
-			array[i] = temp[i + pos];
-		}
-		if (array[0] === undefined) return;
-		if (array[0].includes(',')) {
-			const content = array[0].split(',');
-			return content;
-		}
-		if (array.length === 2) array.pop();
-		return array;
 	}
 
 	removeDuplicates(arr) {
@@ -196,28 +169,6 @@ module.exports = class Util {
 		return new Error(description);
 	}
 
-	// WTF v (THERE IS ALREADY A METHOD FOR THAT!)
-	// TODO: Unite all time convertors
-	timeConversion(millisec) {
-		var seconds = (millisec / 1000).toFixed(1);
-
-		var minutes = (millisec / (1000 * 60)).toFixed(1);
-
-		var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
-
-		var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
-
-		if (seconds < 60) {
-			return `${seconds} Sec`;
-		} else if (minutes < 60) {
-			return `${minutes} Min`;
-		} else if (hours < 24) {
-			return `${hours} Hrs`;
-		} else {
-			return `${days} Days`;
-		}
-	}
-
 	checkForReactMessages(str) {
 		let result = false;
 		str = str.toLowerCase();
@@ -235,12 +186,12 @@ module.exports = class Util {
 		let result = false;
 		str = str.toLowerCase();
 		reactToThis.string.forEach(el => {
-			/*			console.log(el);
+			/*			//console.log(el);
 						if (str.includes(el)) result = el;*/
 			// `/\\b${el}\\b/gi`
 			const regex = new RegExp(`\\b${el}\\b`);
 			if (str.match(regex) !== null) {
-				console.log('Look at me I did something!');
+				//console.log('Look at me I did something!');
 				result = str.match(regex);
 			}
 		});
@@ -255,75 +206,6 @@ module.exports = class Util {
 			message.react(reaction[i]);
 		}
 	}
-
-	// TODO: Unite all time convertors
-	formatTimeToHHMMSS(string) {
-		// don't forget the second param
-		var secs = parseInt(string, 10) / 1000;
-		var hours = Math.floor(secs / 3600);
-		var minutes = Math.floor((secs - (hours * 3600)) / 60);
-		var seconds = Math.round(secs - (hours * 3600) - (minutes * 60));
-
-		if (hours < 10) { hours = `0${hours}`; }
-		if (minutes < 10) { minutes = `0${minutes}`; }
-		if (seconds < 10) { seconds = `0${seconds}`; }
-		return `${hours} hr:${minutes} min:${seconds} sec`;
-	}
-
-	/**
-	 * Get old uncached messages from a channel
-	 *
-	 * @param {Channel} channel
-	 * @param {Integer} amount
-	 *
-	 * @returns {Array} messages
-	 */
-	/*
-	fetchMessages(channel, amount) {
-		let _messages;
-		let left = amount;
-		let initilized = false;
-
-		console.log(`left: ${left}, initilized: ${initilized}`);
-		return new Promise(resolve => {
-			loadMessages();
-			function loadMessages() {
-				if (left === 0) {
-					resolve(_messages);
-					return;
-				}
-				let limit;
-				if (left >= 100) {
-					limit = 100;
-					left -= 100;
-				} else {
-					limit = left;
-					left = 0;
-				}
-				const options = { limit: limit };
-				if (initilized === true) {
-					console.log(`Current _messages: ${_messages.length}`);
-					options.before = _messages.last().id;
-				} else {
-					initilized = true;
-				}
-				console.log(options);
-				channel.messages.fetch(options)
-					.then(msgCollection => {
-						if (_messages === undefined) {
-							_messages = msgCollection;
-						} else {
-							_messages = _messages.concat(msgCollection);
-						}
-						loadMessages();
-					})
-					.catch(err => {
-						console.error(err);
-					});
-			}
-		});
-	}
-	*/
 
 	/**
 	 * 
@@ -351,7 +233,7 @@ module.exports = class Util {
 	 * @returns {Collection<Message>}
 	 */
 	async #loopUtil(channels, amount, scope, messageFilter, messageCollection = new Collection(), index = 0) {
-		console.log(channels.length, index);
+		//console.log(channels.length, index);
 		if (index === channels.length) return messageCollection;
 		messageCollection = messageCollection.concat(await this.#fetchUtil(channels[index], amount, scope, messageFilter));
 		return await this.#loopUtil(channels, amount, scope, messageFilter, messageCollection, index + 1);
@@ -436,8 +318,8 @@ module.exports = class Util {
 					messageFilter = (message) => this.isOlder(message) === false
 				}
 			}
-			console.log(channelFilter);
-			console.log(messageFilter);
+			//console.log(channelFilter);
+			//console.log(messageFilter);
 			if (!messageFilter) return messages;
 			let channels;
 			if (ChannelTypes[scope.channel] === ChannelTypes.GUILD_CATEGORY) {
@@ -445,7 +327,7 @@ module.exports = class Util {
 			} else {
 				channels = !channelFilter ? [scope.channel] : guild.channels.cache.filter(channel => channelFilter(channel)).map(a => a);
 			}
-			console.log(channels.map(a => a.id));
+			//console.log(channels.map(a => a.id));
 			if (channels.length === 0) return messages;
 			// Needs to be constant to be able to fetch same amount from all the channels
 			const amountToFetch = scope.amount ? scope.amount : -1;
@@ -471,7 +353,6 @@ module.exports = class Util {
 
 	fetchUserData(id) {
 		return new Promise(resolve => {
-			console.log('Do you exist?');
 			this.client.users.fetch(id)
 				.then(target => {
 					const data = {
@@ -486,7 +367,6 @@ module.exports = class Util {
 						.then(filtered => {
 							data.guilds = this.determinePosition(target, userGuilds, filtered);
 						});
-					console.log(data);
 					resolve(data);
 				})
 				.catch(err => {
@@ -521,8 +401,8 @@ module.exports = class Util {
 	determinePosition(user, guildCollection, dataToEnrich) {
 		let counter = 0;
 		const shallowCopy = dataToEnrich;
-		console.log('What is this mindfuck of logs');
-		console.log(shallowCopy);
+		//console.log('What is this mindfuck of logs');
+		//console.log(shallowCopy);
 		guildCollection.each(guild => {
 			let position = 'Member';
 			if (guild.ownerId === user.id) {
@@ -567,21 +447,16 @@ module.exports = class Util {
 													resolve({ invite: invite.url });
 												})
 												.catch(error => {
-													console.log('Step three');
-													console.log(error);
 													resolve({ error: 'missing permission' });
 												});
 										}
 									});
 							})
 							.catch(error => {
-								console.log('Step two');
-								console.log(error);
 								resolve({});
 							});
 					})
 					.catch(err => {
-						console.log('Step one');
 						console.error(err);
 						resolve({});
 					});
@@ -597,15 +472,12 @@ module.exports = class Util {
 											resolve({ invite: invite.url });
 										})
 										.catch(error => {
-											console.log('Step three');
-											console.log(error);
 											resolve({ error: 'missing permission' });
 										});
 								}
 							});
 					})
 					.catch(err => {
-						console.log('Step one');
 						console.error(err);
 						resolve({});
 					});
@@ -623,7 +495,6 @@ module.exports = class Util {
 	formatChannelTypes(channels) {
 		if (channels) {
 			if (Array.isArray(channels)) {
-				console.log('Formatting array of channels');
 				const channelNames = channels.map(el => {
 					let channelName = ChannelTypes[el].replace('_', ' ');
 					if (channelName !== 'DM') {
@@ -654,7 +525,7 @@ module.exports = class Util {
 		const user = this.client.users.cache.get(userId);
 		if (!user || Object.keys(user).length === 0) return [];
 		const mutualGuilds = this.client.guilds.cache.filter(guild => guild.members.cache.has(userId)).map(guild => guild);
-		console.log(mutualGuilds.map(guild => guild.name));
+		//console.log(mutualGuilds.map(guild => guild.name));
 		const userGuildInfoObj = await this.determineUserStandingInGuilds(user, mutualGuilds);
 		// Dunno how it works rn, but if they return iterable it could be chained like a builder I think
 		// TODO: do that ^
@@ -672,7 +543,6 @@ module.exports = class Util {
 			let syncCounter = 0;
 			const returnObj = {};
 			const populateReturnObj = (position, guild, member) => {
-				console.log('Populating the response');
 				syncCounter++;
 				guild.members.fetch(guild.ownerId)
 					.then(owner => {
@@ -690,7 +560,6 @@ module.exports = class Util {
 								allowed: member.permissions.has(Permissions.FLAGS.CREATE_INSTANT_INVITE)
 							}
 						}
-						console.log(returnObj[guild.name]);
 						if (syncCounter === guilds.length) return resolve(returnObj);
 					})
 			}
@@ -726,26 +595,21 @@ module.exports = class Util {
 				const member = await guild.members.fetch(user);
 				// TODO: automate checks
 				funcObj.manage.roles = member.permissions.has(Permissions.FLAGS.MANAGE_ROLES);
-				console.log('===============Mongo test===============');
-				console.log('Somethings fishy')
-				console.log(await ServerConfig.find({}));
-				console.log(ServerConfig.checkServerRolesAccessByGuildId(guildId).get('memberRoles.selfAssign'))
-				console.log((await ServerConfig.checkServerRolesAccessByGuildId(guildId)).memberRoles.selfAssign)
-				console.log('I hope this works');
 				const roles = [];
-				const rolesData = (await ServerConfig.checkServerRolesAccessByGuildId(guildId)).memberRoles.selfAssign;
+				let rolesData = (await ServerConfig.checkServerRolesAccessByGuildId(guildId));
+				console.log(rolesData);
+				if (!rolesData) {
+					rolesData = { any: [] };
+					rolesData.specific = [];
+				} else {
+					rolesData = rolesData.memberRoles.selfAssign;
+				}
 				if (rolesData.any.length > 0) roles.push('any');
 				roles.concat(rolesData.specific.map(el => el.roleId));
-				console.log(roles);
-				console.log('=====Mongo test 2 electric boogaloo=====');
 				const actualManualQuery = await ServerConfig.findOne({ guildId: guildId });
-				console.log(actualManualQuery.memberRoles.selfAssign.any);
-				console.log(actualManualQuery.memberRoles.selfAssign.specific);
 				ServerConfig.findOne({ guildId: "782596167158333460" }, function (err, serverConfig) {
 					if (err) console.error(err);
-					console.log(serverConfig);
 				})
-				console.log('========================================')
 				populateGuildObj(guildName, funcObj);
 				return;
 			}
@@ -754,10 +618,7 @@ module.exports = class Util {
 				const roles = [];
 				const document = await ServerConfig.getByGuildId(guildId);
 				if (!document) return funcObj;
-				console.log('Data for ', guildId);
 				const rolesData = document.memberRoles.selfAssign;
-				console.log(rolesData.any);
-				console.log(rolesData.specific)
 				if (rolesData.any.length > 0) roles.push('any');
 				funcObj.roles = roles.concat(rolesData.specific.map(el => el.roleId));
 				return funcObj;
@@ -775,7 +636,6 @@ module.exports = class Util {
 					},
 					// Are there roles to pick?
 					roles: [],
-
 				}
 
 				if (guildObj[guild].position === 'Owner') {
@@ -826,32 +686,14 @@ module.exports = class Util {
 	 */
 	updateAccessibleRoles(guildId, roles) {
 		return new Promise(async resolve => {
-			/*ServerConfig.updateAccessibleRolesByGuildId(guildId, roles)
-				.then(() => {
-					return resolve('finished');
-				})*/
-			/*ServerConfig.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } }, { upsert: true, new: true }, (err, newDoc) => {
-				if (err) {
-					logger.error(err);
-					resolve('fail');
-				} else {
-					console.log(newDoc.memberRoles.selfAssign.any);
-					console.log(newDoc.memberRoles.selfAssign.specific);
-					resolve('finished');
-				}
-			});*/
-			console.log('Did I catch the fuckwit?');
-			console.log(roles);
 			const any = roles.any ? roles.any : [];
 			const specific = roles.specific ? roles.specific : [];
-			console.log('Mmh this update');
 			const newDoc = await ServerConfig.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign.any': any, 'memberRoles.selfAssign.specific': specific } }, { upsert: true, new: true });
 			resolve(newDoc);
 		})
 	}
 
 	fetchSelfAssignableRoles(guildId, user) {
-		console.log('==============Depression time==============');
 		return new Promise(resolve => {
 			let guild, member, guildConfRoles, guildAllRoles = '';
 			const load = async () => {
@@ -863,21 +705,13 @@ module.exports = class Util {
 			}
 			load()
 				.then(() => {
-					console.log(guildConfRoles);
 					let roles = [];
 					const basicRoleFilter = (role) => {
 						if (!role) return false
-						console.log(role ? true : false);
-						console.log(this.verifyRolePosition(role) === true ? true : false);
-						console.log(!role.tags ? true : false);
 						return (this.verifyRolePosition(role) === true && !role.tags) ? true : false;
 					}
 					if (guildConfRoles.any.length > 0) roles = roles.concat(guildConfRoles.any.map(el => {
-						console.log(guildAllRoles.size);
-						console.log(el);
 						const role = guildAllRoles.get(el);
-						console.log(role);
-						console.log(el, ' => ', basicRoleFilter(role));
 						if (basicRoleFilter(role) === true) {
 							return {
 								name: role.name,
@@ -890,14 +724,11 @@ module.exports = class Util {
 					}))
 					let temp = [];
 					if (guildConfRoles.specific.length > 0) guildConfRoles.specific.forEach(el => {
-						console.log(el.roleId, ' >>> ', member.roles.cache.has(el.roleId));
 						if (member.roles.cache.has(el.roleId) === true) {
 							const role = guildAllRoles.get(el.roleId);
-							console.log(el.roleId, ' => ', basicRoleFilter(role));
 							if (basicRoleFilter(role) === true) {
 								temp = temp.concat(el.roles.map(id => {
 									const mapEl = guildAllRoles.get(id);
-									console.log(id, ' ==>> ', basicRoleFilter(mapEl));
 									if (basicRoleFilter(mapEl) === true) {
 										return {
 											name: mapEl.name,
@@ -911,7 +742,6 @@ module.exports = class Util {
 							}
 						}
 					});
-					console.log('===========================================');
 					return resolve((roles.concat(temp)).filter(el => el ? true : false));
 				})
 		})
@@ -926,7 +756,6 @@ module.exports = class Util {
 	 */
 	applySelfAssignableRoles(guildId, user, roles) {
 		return new Promise(resolve => {
-			console.log('=============applySelfAssignableRoles=============');
 			let guild, member, guildConfRoles, guildAllRoles = '';
 			const rejects = [];
 			const add = [];
@@ -947,7 +776,6 @@ module.exports = class Util {
 				.then(() => {
 					roles.forEach(roleId => {
 						const role = guildAllRoles.get(roleId);
-						console.log(roleId, ' => ', role ? true : false);
 						if (!role) {
 							rejects.push(roleId);
 							return;
@@ -980,47 +808,36 @@ module.exports = class Util {
 							return;
 						}
 					})
-					console.log(add, remove, rejects);
 					if (add.length > 0) {
 						member.roles.add(add)
 							.then((memberUpdate) => {
-								console.log('Added ', add.length, ' roles');
-								console.log(memberUpdate.roles.cache.has(add[0]) === true ? 'That\'s right' : 'You dirty liar');
 								if (remove.length > 0) {
 									memberUpdate.roles.remove(remove)
 										.then((memberUpdate) => {
-											console.log('Removed ', remove.length, ' roles');
-											console.log(memberUpdate.roles.cache.has(remove[0]) === false ? 'That\'s right' : 'You dirty liar');
+
 										})
 										.catch(err => {
-											console.log('Stuff went haywire');
 											console.error(err);
 										})
 								}
 							})
 							.catch(err => {
-								console.log('Stuff went haywire');
 								console.error(err);
 							})
 					} else if (remove.length > 0) {
 						member.roles.remove(remove)
 							.then((memberUpdate) => {
-								console.log('Removed ', remove.length, ' roles');
-								console.log(memberUpdate.roles.cache.has(remove[0]) === false ? 'That\'s right' : 'You dirty liar');
 							})
 							.catch(err => {
-								console.log('Stuff went haywire');
 								console.error(err);
 							})
 					}
-					console.log('==================================================');
 					return resolve(rejects);
 				});
 		});
 	}
 
 	fetchAllRolesForManage(guildId, user) {
-		console.log('==============Depression time 2==============');
 		return new Promise(resolve => {
 			let guild, member, guildConfRoles, guildAllRoles = '';
 			const load = async () => {
@@ -1032,21 +849,13 @@ module.exports = class Util {
 			}
 			load()
 				.then(() => {
-					console.log(guildConfRoles);
 					let roles = [];
 					const basicRoleFilter = (role) => {
 						if (!role) return false
-						console.log(role ? true : false);
-						console.log(this.verifyRolePosition(role) === true ? true : false);
-						console.log(!role.tags ? true : false);
 						return (this.verifyRolePosition(role) === true && !role.tags) ? true : false;
 					}
 					if (guildConfRoles.any.length > 0) roles = roles.concat(guildConfRoles.any.map(el => {
-						console.log(guildAllRoles.size);
-						console.log(el);
 						const role = guildAllRoles.get(el);
-						console.log(role);
-						console.log(el, ' => ', basicRoleFilter(role));
 						if (basicRoleFilter(role) === true && member.roles.highest.comparePositionTo(role) > 0) {
 							return {
 								name: role.name,
@@ -1059,13 +868,10 @@ module.exports = class Util {
 					}))
 					let temp = [];
 					if (guildConfRoles.specific.length > 0) guildConfRoles.specific.forEach(el => {
-						console.log(el.roleId, ' >>> ', member.roles.cache.has(el.roleId));
 						const role = guildAllRoles.get(el.roleId);
-						console.log(el.roleId, ' => ', basicRoleFilter(role));
 						if (basicRoleFilter(role) === true && member.roles.highest.comparePositionTo(role) > 0) {
 							temp = temp.concat(el.roles.map(id => {
 								const mapEl = guildAllRoles.get(id);
-								console.log(id, ' ==>> ', basicRoleFilter(mapEl));
 								if (basicRoleFilter(mapEl) === true && member.roles.highest.comparePositionTo(mapEl) > 0) {
 									return {
 										name: mapEl.name,
@@ -1081,7 +887,6 @@ module.exports = class Util {
 						}
 					});
 					roles = roles.concat(temp);
-					console.log('=============================================');
 					return resolve(((roles).filter(el => el ? true : false)).concat((guildAllRoles.filter(role => {
 						if (role.name === '@everyone' || roles.filter(el => {
 							if (!el) return false;

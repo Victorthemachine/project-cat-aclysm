@@ -7,7 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { Alert, AlertTitle, Collapse, FormControl, NativeSelect, Grid } from '@mui/material';
+import { Alert, AlertTitle, Collapse, FormControl, NativeSelect, Grid, Paper } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -47,9 +47,9 @@ export default function ButtonAppBar(props) {
             withCredentials: true,
         })
             .then(res => {
-                console.log('========New route========');
-                console.log(res.data);
-                console.log('=========================')
+                //console.log('========New route========');
+                //console.log(res.data);
+                //console.log('=========================')
                 let temp = [];
                 for (let guildName in res.data) {
                     temp.push(<ServerCard popAlert={setShowAlert} alertType={setAlertSuccess} serverInfo={{ ...res.data[guildName], name: guildName }} />);
@@ -105,7 +105,7 @@ export default function ButtonAppBar(props) {
                                 onChange={event => toggleLocale(event.target.value)}
                                 sx={{ color: (theme) => theme.palette.primary.contrastText }}
                             >
-                                {availibleLangs.map(el => <option color='inherit' value={el}>{String(el).toUpperCase()}</option>)}
+                                {availibleLangs.map(el => <option color="text.primary" value={el}>{String(el).toUpperCase()}</option>)}
                             </NativeSelect>
                         </FormControl>
                         <IconButton sx={{ color: (theme) => theme.palette.primary.contrastText, mr: 2 }} onClick={toggleDarkMode}>
@@ -115,39 +115,41 @@ export default function ButtonAppBar(props) {
                     </div>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="persistent" anchor="left" open={open} style={drawerStyle} PaperProps={{ sx: { width: drawerWidth } }}>
+            <Drawer variant="persistent" anchor="left" open={open} style={drawerStyle} PaperProps={{ sx: { width: drawerWidth, bgcolor: theme => theme.palette.background.default } }}>
                 <UserCard sx={{ minHeight: 1 / 4 }} />
                 <Button fullWidth> Example </Button>
             </Drawer>
-            <div style={{ ...adjustedContentByDrawer, marginTop: '2%' }}>
-                <Collapse sx={{ zIndex: (theme) => theme.zIndex.appBar + 2 }} in={showAlert}>
-                    <Alert severity={alertSuccess === true ? "success" : "error"}>
-                        <AlertTitle>{intl.formatMessage({ id: 'invite_alert_title' })}</AlertTitle>
-                        {intl.formatMessage({ id: `${alertSuccess === true ? 'invite_alert_success' : 'invite_alert_error'}` })}
-                    </Alert>
-                </Collapse>
-                <Routes>
-                    <Route path="/" exact element={
-                        <Grid
-                            container
-                            sx={{ flexGrow: 1 }}
-                            spacing={4}
-                            justifyContent="center"
-                            alignItems="stretch"
-                        >
-                            {userGuilds.map(el => {
-                                return (
-                                    <Grid item xs={12} md={2}>
-                                        {el}
-                                    </Grid>
-                                )
-                            })}
-                        </Grid>
-                    } />
-                    <Route path="/roles" element={<RolePage guildInformation={guildInformation} />} />
-                    <Route path="/manage" element={<ManagePage serverInfo={guildInformation} />} />
-                </Routes>
-                {props.children}
+            <div style={{ ...adjustedContentByDrawer, height: '100vh' }}>
+                <Paper sx={{ width: 1, minHeight: '100vh' }}>
+                    <Collapse sx={{ zIndex: (theme) => theme.zIndex.appBar + 2 }} in={showAlert}>
+                        <Alert severity={alertSuccess === true ? "success" : "error"}>
+                            <AlertTitle>{intl.formatMessage({ id: 'invite_alert_title' })}</AlertTitle>
+                            {intl.formatMessage({ id: `${alertSuccess === true ? 'invite_alert_success' : 'invite_alert_error'}` })}
+                        </Alert>
+                    </Collapse>
+                    <Routes>
+                        <Route path="/" exact element={
+                            <Grid
+                                container
+                                sx={{ flexGrow: 1 }}
+                                spacing={4}
+                                justifyContent="center"
+                                alignItems="stretch"
+                            >
+                                {userGuilds.map(el => {
+                                    return (
+                                        <Grid item xs={12} md={2}>
+                                            {el}
+                                        </Grid>
+                                    )
+                                })}
+                            </Grid>
+                        } />
+                        <Route path="/roles" element={<RolePage guildInformation={guildInformation} />} />
+                        <Route path="/manage" element={<ManagePage serverInfo={guildInformation} />} />
+                    </Routes>
+                    {props.children}
+                </Paper>
             </div>
         </>
     );

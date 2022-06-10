@@ -28,8 +28,8 @@ const UserCard = () => {
         window.location.reload();
     }
 
-    console.log('What are the flavours today')
-    console.log(document.cookie);
+    //console.log('What are the flavours today')
+    //console.log(document.cookie);
 
     return (
         <Card sx={{ display: 'flex', justifyContent: 'center', allignItems: 'center', direction: 'collumn' }}>

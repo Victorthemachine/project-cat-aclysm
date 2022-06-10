@@ -8,7 +8,7 @@ import axios from 'axios';
 // source: https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4#:~:text=Protected%20Routes%20are%20routes%20that,based%20on%20a%20set%20condition.
 function LoginRoute() {
     //const isAuthenticated = localStorage.getItem("nya-bot-auth");
-    //console.log("this", isAuthenticated);
+    ////console.log("this", isAuthenticated);
     const params = useParams();
     const [verified, setVerified] = React.useState();
 

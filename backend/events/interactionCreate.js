@@ -5,12 +5,9 @@ const { extractSlashCommandOptions } = require('./../structures/utils/Interactio
 module.exports = class extends Event {
 
 	async run(interaction) {
-		// console.log(extractSlashCommandOptions(interaction));
 		if (interaction.isCommand() === true) {
 			const slashCommand = this.client.slashCommands.get(interaction.commandName);
 			// Verify permissions, channels, owner, maybe guild specific role perms?
-			console.log(slashCommand.channels);
-			console.log(ChannelTypes[interaction.channel.type]);
 			if (slashCommand.channels.includes(ChannelTypes[interaction.channel.type]) === false) {
 				return interaction.reply({
 					content: `Sorry but this command can't be used in ${this.client.utils.formatChannelTypes(slashCommand.channels)} >~<!`,

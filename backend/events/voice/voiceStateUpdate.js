@@ -3,6 +3,7 @@ const logger = require('./../../structures/Logger');
 
 module.exports = class extends Event {
 
+	// TODO: rework entire music, ditch the module just steal the extractors and use that. Private YT so that they can't sue me -w-
 	async run(oldVoiceState, newVoiceState) {
 		logger.info('========================vVoiceStateUpdatev========================');
 		const oldVoiceChannel = !oldVoiceState.channel ? null : await this.client.channels.fetch(oldVoiceState.channelId);

@@ -7,7 +7,6 @@ const MusicPlayer = require('./MusicPlayer');
 const MusicUtil = require('./utils/MusicUtil.js');
 const ServerUtils = require('./utils/ServerUtils');
 const { setClient } = require('./utils/InteractionExtractor');
-// const Logger = require('winston')
 
 module.exports = class NyaBotClient extends Client {
 
@@ -64,8 +63,6 @@ module.exports = class NyaBotClient extends Client {
 		this.db.connect();
 
 		this.player = new MusicPlayer(this);
-
-		this.spamLog = {};
 	}
 
 	validate(options) {

@@ -38,10 +38,10 @@ module.exports = class extends SlashCommand {
 				if (args.reason) {
 					member.send({ content: `You were banned from ${interaction.guild.name} for: ${args.reason}` })
 						.then(succ => {
-							console.log('Reason sent!');
+							//console.log('Reason sent!');
 						})
 						.catch(err => {
-							console.log('Yikes');
+							//console.log('Yikes');
 						});
 				}
 				const banObj = () => {

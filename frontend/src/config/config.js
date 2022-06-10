@@ -3,7 +3,7 @@ import { locales } from './locales/index';
 import routes from './routes';
 import { Route } from 'react-router';
 
-console.log(routes[0].path, routes[0].exact, routes[0].component);
+//console.log(routes[0].path, routes[0].exact, routes[0].component);
 const config = {
     locale: {
         locales,

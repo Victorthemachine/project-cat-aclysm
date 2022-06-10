@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "../../frontend", "build")));
-console.log(path.join(__dirname, "server/public"));
+//console.log(path.join(__dirname, "server/public"));
 app.use('/assets', express.static(path.join(__dirname, "server/public")));
 
 app.get('/', (req, res, next) => {
@@ -30,7 +30,7 @@ app.get('/', (req, res, next) => {
 });
 
 app.listen(configuration.port, () => {
-    console.log(`Server operational, ${configuration.https === true ? 'https' : 'http'}://localhost:${configuration.port}/`);
+    //console.log(`Server operational, ${configuration.https === true ? 'https' : 'http'}://localhost:${configuration.port}/`);
 })
 
 module.exports = class Server {
@@ -56,19 +56,19 @@ module.exports = class Server {
     }
 
     #verifyRoute(req, res) {
-        console.log(req.get('token'));
-        console.log(req.body);
+        //console.log(req.get('token'));
+        //console.log(req.body);
         if (req.body.token) {
             const { body: { token } } = req;
             Client.verifyToken(token).then(verified => {
-                console.log(verified);
+                //console.log(verified);
                 if (verified === true) {
                     Client.findByToken(token)
                         .then(records => {
-                            console.log(records);
+                            //console.log(records);
                             this.client.utils.fetchUserData(records[0].discord.userId)
                                 .then(json => {
-                                    console.log(json);
+                                    //console.log(json);
                                     res.send(json);
                                 })
                         })
@@ -86,11 +86,11 @@ module.exports = class Server {
 
     #inviteRoute(req, res) {
         if (req.body.token) {
-            console.log(req.body)
+            //console.log(req.body)
             const { body: { token, guildId } } = req;
-            console.log(guildId);
+            //console.log(guildId);
             Client.verifyToken(token).then(verified => {
-                console.log(verified);
+                //console.log(verified);
                 if (verified === true) {
                     Client.findByToken(token)
                         .then(records => {

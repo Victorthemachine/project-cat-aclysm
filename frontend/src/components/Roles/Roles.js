@@ -9,9 +9,9 @@ const Roles = (props) => {
     const intl = useIntl();
     const [allRoles, setAllRoles] = React.useState();
     const [allChecked, setAllChecked] = React.useState();
-    console.log('===============Uhhh cmon gimme a break===============');
-    console.log(allRoles);
-    console.log(allChecked);
+    //console.log('===============Uhhh cmon gimme a break===============');
+    //console.log(allRoles);
+    //console.log(allChecked);
     React.useEffect(() => {
         axios.post('http://localhost:8080/info/selfroles', {
             guildId: props.serverInfo.guildId
@@ -41,7 +41,7 @@ const Roles = (props) => {
         }, {
             withCredentials: true
         }).then(res => {
-            console.log(res.data);
+            //console.log(res.data);
             // Announce rejected roles and also make sure they dont get checked
             const copy = JSON.parse(JSON.stringify(allRoles));
             setAllRoles(copy.map(el => {
@@ -56,7 +56,7 @@ const Roles = (props) => {
     const listItems = allChecked ? allRoles ? Array.isArray(allRoles) ? allRoles.map(el => {
         return <Role checked={allChecked[el.id] ? allChecked[el.id] : false} role={el} setChecked={setChecked} />
     }) : [] : [] : []
-    console.log('=====================================================');
+    //console.log('=====================================================');
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
@@ -64,9 +64,11 @@ const Roles = (props) => {
                 <List sx={{ bgcolor: 'background.paper' }} subheader={<Typography variant="h5">{`${intl.formatMessage({ id: 'role_header' })} ${props.serverInfo.guildName}`}</Typography>} >
                     {listItems}
                 </List>
-                <Button onClick={handleSubmit} >
-                    {intl.formatMessage({ id: 'submit_roles' })}
-                </Button>
+                <div style={{ paddingRight: '25%', paddingLeft: '25%', width: '50%', display: 'flex', justifyContent: 'center' }}>
+                    <Button size="large" variant="contained" sx={{ width: 1 / 2 }} onClick={handleSubmit} >
+                        {intl.formatMessage({ id: 'submit_roles' })}
+                    </Button>
+                </div>
             </div>
         </div>
     )

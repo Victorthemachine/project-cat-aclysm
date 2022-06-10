@@ -34,9 +34,9 @@ module.exports = class TwoWayMap {
      * @returns {String | Integer | undefined} returns key, or undefined if doesn't exist
      */
     fetch(value) {
-        console.log(`Fetching key for value: ${value}`);
-        console.log(Object.keys(this.map));
-        console.log(Object.keys(this.reverseMap));
+        //console.log(`Fetching key for value: ${value}`);
+        //console.log(Object.keys(this.map));
+        //console.log(Object.keys(this.reverseMap));
         if (this.#checkForKeyValidity(value, this.reverseMap) === true) {
             return this.reverseMap[String(value)];
         } else return undefined;

@@ -27,7 +27,7 @@ module.exports = class extends Command {
 			.then(geniusApiData => {
 				const allowProfanity = message.channel.nsfw;
 				const divideIntoBlocks = geniusApiData.lyrics.replace(/[\\$'"]/g, '\$&').split('\n');
-				// console.log(divideIntoBlocks);
+				// //console.log(divideIntoBlocks);
 				const blocks = [];
 				let potentionallyCompleteBlock = '';
 				let tempBlock = '';
@@ -72,8 +72,8 @@ module.exports = class extends Command {
 				}
 				if (potentionallyCompleteBlock) blocks.push(potentionallyCompleteBlock);
 				if (tempBlock) blocks.push(tempBlock);
-				// console.log(blocks);
-				console.log(blocks);
+				// //console.log(blocks);
+				//console.log(blocks);
 				const titleCard = new MessageEmbed()
 					.setColor(embedConfig.color)
 					.setAuthor(message.member.displayName, message.member.displayAvatarURL())

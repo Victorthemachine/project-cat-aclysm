@@ -55,7 +55,7 @@ memberSchema.statics.updateRoleForGuildId = function (memberId, guildId, roles, 
 				callback(newDoc);
 			});
 		} else {
-			console.log(doc);
+			//console.log(doc);
 			const newArr = doc.roles;
 			const index = newArr.findIndex(el => el.guildId === guildId);
 			newArr[index === -1 ? 0 : index] = {

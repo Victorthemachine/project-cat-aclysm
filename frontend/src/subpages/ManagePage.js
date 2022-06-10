@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Button, List, ListItem, ListItemAvatar, ListItemText, NativeSelect, Typography } from '@mui/material';
+import { Avatar, Button, List, ListItem, ListItemAvatar, ListItemText, NativeSelect, Typography, Paper } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
@@ -7,10 +7,10 @@ import axios from 'axios';
 import Loading from '../pages/Loading/Loading';
 
 const RoleListForManage = ({ roles, compStates, handleSelectEvent, handleSubSelectEvent }) => {
-    console.log('=====Ass munching is over=====');
-    console.log(roles);
-    console.log(compStates);
-    console.log('==============================')
+    //console.log('=====Ass munching is over=====');
+    //console.log(roles);
+    //console.log(compStates);
+    //console.log('==============================')
     const intl = useIntl();
     return (
         Array.isArray(roles) === true
@@ -20,16 +20,13 @@ const RoleListForManage = ({ roles, compStates, handleSelectEvent, handleSubSele
                         {roles.map(el => {
                             return (
                                 <ListItem sx={{ flexGrow: 1, bgcolor: el.color }}>
-                                    <ListItemText primary={el.name} />
+                                    <ListItemText primary={<Typography variant="h5" sx={{ fontWeight: 'bold' }}>{el.name}</Typography>} />
                                     {el.avatar
                                         ? <ListItemAvatar>
                                             <Avatar src={el.avatar} aria-label="Role icon" />
                                         </ListItemAvatar>
                                         : <></>
                                     }
-                                    {console.log((roles.find(elem => elem.parent === compStates[el.id].parent)))}
-                                    {console.log((roles.filter(el => el.parent === compStates[el.id].parent)).shift())}
-                                    {console.log(el)}
                                     {
                                         compStates[el.id].category === 'specific' && compStates[el.id].parent
                                             ? <NativeSelect
@@ -39,8 +36,9 @@ const RoleListForManage = ({ roles, compStates, handleSelectEvent, handleSubSele
                                                     name: 'rule',
                                                 }}
                                                 onChange={(event) => handleSubSelectEvent(event.target.value, el.id)}
+                                                sx={{ fontWeight: 'bold', fontVariant: 'h5' }}
                                             >
-                                                {roles.filter(elem => elem.id !== el.id).map(element => <option value={element.id}>{element.name}</option>)}
+                                                {roles.filter(elem => elem.id !== el.id).map(element => <option style={{ fontWeight: 'bold', fontVariant: 'h5' }} value={element.id}>{element.name}</option>)}
                                             </NativeSelect>
                                             : <></>
                                     }
@@ -51,16 +49,17 @@ const RoleListForManage = ({ roles, compStates, handleSelectEvent, handleSubSele
                                             name: 'category',
                                         }}
                                         onChange={(event) => handleSelectEvent(event.target.value, el.id)}
+                                        sx={{ fontWeight: 'bold', fontVariant: 'h5' }}
                                     >
-                                        <option value={'any'}>Anyone</option>
-                                        <option value={'specific'}>Only with role</option>
-                                        <option value={'unassigned'}>None</option>
+                                        <option style={{ fontWeight: 'bold', fontVariant: 'h5' }} value={'any'}>Anyone</option>
+                                        <option style={{ fontWeight: 'bold', fontVariant: 'h5' }} value={'specific'}>Only with role</option>
+                                        <option style={{ fontWeight: 'bold', fontVariant: 'h5' }} value={'unassigned'}>None</option>
                                     </NativeSelect>
                                 </ListItem>
                             )
                         })}
                     </List>
-                </div>
+                </div >
             )
             : <></>
     )
@@ -80,20 +79,20 @@ const ManagePage = ({ serverInfo }) => {
             if (serverInfo[i].guildId === searchParams.get('guild')) keyName = i;
         }
     }
-    console.log('=========Manage panel=========');
-    console.log(pageData);
-    console.log(roleCompsState);
-    console.log(keyName);
+    //console.log('=========Manage panel=========');
+    //console.log(pageData);
+    //console.log(roleCompsState);
+    //console.log(keyName);
     React.useEffect(() => {
         if (!keyName) return;
-        console.log(serverInfo);
+        //console.log(serverInfo);
         if (serverInfo[keyName].userPerms.manage.roles === true) {
             axios.post('http://localhost:8080/info/manageroles', {
                 guildId: searchParams.get('guild')
             }, {
                 withCredentials: true
             }).then(res => {
-                console.log(res.data.roles);
+                //console.log(res.data.roles);
                 const temp = {
                     roles: {}
                 };
@@ -114,7 +113,7 @@ const ManagePage = ({ serverInfo }) => {
     }, [keyName, serverInfo, searchParams]);
 
     const handleSelectEvent = (value, id) => {
-        console.log('Are you to blame? ', value)
+        //console.log('Are you to blame? ', value)
         const temp = JSON.parse(JSON.stringify(roleCompsState));
         temp.roles[id].category = value;
         if (value === 'specific') {
@@ -147,9 +146,9 @@ const ManagePage = ({ serverInfo }) => {
                 }
             }
         }
-        console.log('Bruh')
-        console.log(any)
-        console.log(specific);
+        //console.log('Bruh')
+        //console.log(any)
+        //console.log(specific);
 
         axios.post('http://localhost:8080/manage/updateroles', {
             guildId: searchParams.get('guild'),
@@ -160,20 +159,20 @@ const ManagePage = ({ serverInfo }) => {
         }, {
             withCredentials: true
         }).then(res => {
-            console.log(res.status)
+            //console.log(res.status)
         }).then(err => {
-            console.log('Oh not again');
-            console.log(err)
+            //console.log('Oh not again');
+            //console.log(err)
         })
     }
-
+    // <Paper sx={{ width: 7/8, height: '100vh', bgcolor: (theme) => theme.palette.background.default, zIndex: 1 }} />
     return (
         loaded === true
             ? (
                 <div style={{ display: 'flex', alignSelf: 'center', justifyContent: 'center', alignContent: 'center', flexDirection: 'column' }}>
-                    <RoleListForManage roles={pageData.roles} compStates={roleCompsState.roles} handleSelectEvent={handleSelectEvent} handleSubSelectEvent={handleSubSelectEvent} />
+                    <RoleListForManage zIndex={2} roles={pageData.roles} compStates={roleCompsState.roles} handleSelectEvent={handleSelectEvent} handleSubSelectEvent={handleSubSelectEvent} />
                     <div style={{ paddingRight: '25%', paddingLeft: '25%', width: '50%', display: 'flex', justifyContent: 'center' }}>
-                        <Button onClick={handleSubmit} variant="contained" sx={{ width: 1 / 2 }}>{intl.formatMessage({ id: 'manage_submit_btn' })}</Button>
+                        <Button size="large" onClick={handleSubmit} variant="contained" sx={{ width: 1 / 2 }}>{intl.formatMessage({ id: 'manage_submit_btn' })}</Button>
                     </div>
                 </div>
             )

@@ -2,17 +2,14 @@
 // So I will leave reference for babel plugin that automates it. File has to be JSON though!
 // https://codeandweb.com/babeledit/tutorials/how-to-translate-your-react-app-with-react-intl
 export const cs_messages = {
-    welcome: 'Dobré ráno čůráci',
+    welcome: 'Vítej',
 
-    sign_in: 'Authentification step',
-    sign_in_context: `Your sessing has expired or you haven't yet used the bot.
-    Head to Discord and use command /manage.
-    Paste your PIN you received from the bot in your DMs or simply open the link.`,
-    entry_pin: 'Enter your PIN',
-    invalid_entry_pin: 'PIN must be 10 characters long',
-    password: 'Password',
-    submit_pin: 'Submit',
-    to_discord: 'Open Discord',
+    sign_in: 'Autentifikace',
+    sign_in_context: `Tvoje připojení vypršelo, nebo si ještě nepoužil bota. Otevři Discord a použij příkaz /manage. Zkopíruj svůj PIN co ti pošle bot, nebo prostě rozklikni odkaz`,
+    entry_pin: 'Napiš svůj PIN',
+    invalid_entry_pin: 'PIN musí mít 10 znaků',
+    submit_pin: 'Potvrdit',
+    to_discord: 'Otevřít Discord',
 
     dashboard: 'Kontrolní panel',
     invite_alert_title: 'Pozvánka',

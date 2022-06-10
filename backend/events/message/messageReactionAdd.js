@@ -7,6 +7,7 @@ const { MessageEmbed } = require('discord.js');
  */
 module.exports = class extends Event {
 
+	// FIXME: Alright just the fact that these two functions exist is ridiculous. Redo
 	doInteract(emoji) {
 		switch (emoji) {
 			case '🗑️':
@@ -21,6 +22,7 @@ module.exports = class extends Event {
 	}
 
 	verificationCheck(message) {
+		// TODO: Fix up these array operations, way too much effort and confusing to read
 		const reactMan = message.reactions;
 		const objectArr = {
 			emotes: [
@@ -34,14 +36,13 @@ module.exports = class extends Event {
 			});
 			objectArr.emotes.push({ name: el.emoji.name, users: tempArr });
 		});
-		console.log(objectArr);
+
 		let correctCount = 0;
 		let falseCount = 0;
 		const voterArr = [];
 		for (let i = 0; i < objectArr.emotes.length; i++) {
 			if (objectArr.emotes[i].name === '✅' || objectArr.emotes[i].name === '❎') {
 				objectArr.emotes[i].users.forEach(element => {
-					console.log(element);
 					if (message.guild.members.cache.has(element)) {
 						if (!message.guild.members.cache.get(element).user.bot) {
 							if (message.guild.members.cache.get(element).id !== message.author.id) {
@@ -67,9 +68,9 @@ module.exports = class extends Event {
 				});
 			}
 		}
-		console.log(`${falseCount}\n${correctCount}`);
+
 		falseCount -= correctCount;
-		falseCount < 0 ? falseCount = 0 : falseCount = falseCount;
+		if (falseCount < 0) falseCount = 0;
 		if (falseCount >= 3) {
 			const attachments = message.attachments.size ? message.attachments.map(attachment => attachment.proxyURL) : null;
 			const embed = new MessageEmbed()
@@ -91,22 +92,24 @@ module.exports = class extends Event {
 	}
 
 	async run(messageReaction, user) {
-		console.log(messageReaction.emoji.name);
-		if (!this.doInteract(messageReaction.emoji.name)) return;
+		if (user.bot) return;
+		if (this.doInteract(messageReaction.emoji.name) === false) return;
 		switch (messageReaction.emoji.name) {
 			case '🗑️':
-				if (user.bot) return;
-				if (user.id !== messageReaction.message.author.id || !this.client.utils.checkOwner(user.id)) return;
-				return messageReaction.message.delete({ timeout: 1000 });
+				if (user.id === messageReaction.message.author.id || this.client.utils.checkOwner(user.id) === true) {
+					messageReaction.message.delete({ timeout: 1000 });
+				}
+				break;
 			case '✅':
 				this.verificationCheck(messageReaction.message);
-				return;
+				break;
 			case '❎':
 				this.verificationCheck(messageReaction.message);
-				return;
+				break;
 			default:
-				return;
+				break;
 		}
+		return;
 	}
 
 };

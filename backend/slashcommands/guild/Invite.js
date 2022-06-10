@@ -35,7 +35,7 @@ module.exports = class extends SlashCommand {
 	async execute(interaction, args) {
 		// Init defaults/user selects
 		// Maybe make guild set default fallbacks? Although I don't really see the point
-		console.log(args.timeout);
+		//console.log(args.timeout);
 		let maxAge = args.timeout ? milis.isTimeUnit(args.unit) ? milis.toMilis(args.timeout, args.unit) : milis.toMilis(args.timeout, 'hour') : 0;
 		if (maxAge > milis.milisTime.week) maxAge = milis.milisTime.week;
 		// FIXME: Discords invite is in seconds? Hadn't seen that in docs -w-. Fix that please later

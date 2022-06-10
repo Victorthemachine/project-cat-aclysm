@@ -24,7 +24,7 @@ module.exports = class extends Command {
 					}
 				})
 				.catch(err => {
-					if (err.response.data.message === 'Unknown Gift Code') console.log('Failed succesfully');
+					if (err.response.data.message === 'Unknown Gift Code') //console.log('Failed succesfully');
 					resolve(false);
 				});
 		});
@@ -32,14 +32,14 @@ module.exports = class extends Command {
 
 	async run(message, args) {
 		if (args.length > 0) {
-			console.log(args[0]);
+			//console.log(args[0]);
 			const str = args[0];
 			let linkParts = str.split('/');
 			if (linkParts.length > 0) {
 				const temp = linkParts.shift();
 				linkParts = temp.split('.').concat(linkParts);
 			}
-			console.log(linkParts);
+			//console.log(linkParts);
 			if (linkParts[0] === 'discord' && linkParts[1] === 'gift') {
 				const code = linkParts.pop();
 				if (code.length === 16) {

@@ -8,9 +8,9 @@ import { LocaleContext } from './config/locales/index';
 import config from './config';
 import Loading from './pages/Loading/Loading'
 
-console.log(config);
-console.log(Object.keys(config.routes[0]));
-console.log(config.routes[0].type, config.routes[0].ref)
+//console.log(config);
+//console.log(Object.keys(config.routes[0]));
+//console.log(config.routes[0].type, config.routes[0].ref)
 const App = () => {
 
   const [theme, setTheme] = React.useState({
@@ -32,7 +32,7 @@ const App = () => {
 
   const _theme = React.useMemo(
     () => {
-      console.log('Creating a new theme for this fuckwit')
+      //console.log('Creating a new theme for this fuckwit')
       if (theme.isDarkMode === true) {
         return createTheme(config.themes.main.dark);
       }
@@ -41,12 +41,12 @@ const App = () => {
     [theme.isDarkMode],
   );
 
-  console.log('=====Just your friendly neighborhood stupid stuff checker=====')
-  console.log('theme');
-  console.log(theme);
-  console.log('possible themes');
-  console.log(config.themes);
-  console.log('==============================================================')
+  //console.log('=====Just your friendly neighborhood stupid stuff checker=====')
+  //console.log('theme');
+  //console.log(theme);
+  //console.log('possible themes');
+  //console.log(config.themes);
+  //console.log('==============================================================')
 
   const [locale, setLocale] = React.useState({
     lang: 'en',
@@ -58,7 +58,7 @@ const App = () => {
 
   const _locale = React.useMemo(
     () => {
-      console.log('Creating a new locale for this fuckwit')
+      //console.log('Creating a new locale for this fuckwit')
       return config.locale.locales[locale.lang]
     },
     [locale.lang],

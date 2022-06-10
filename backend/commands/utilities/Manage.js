@@ -17,7 +17,7 @@ module.exports = class extends Command {
 	async run(message, args) {
 		const { author: { id } } = message;
 		const duplicates = await Client.findByUserId(id);
-		console.log(duplicates);
+		//console.log(duplicates);
 		if (duplicates.length > 0) {
 			Client.deleteMany({ discord: { userId: id } });
 		}

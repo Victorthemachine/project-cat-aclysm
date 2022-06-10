@@ -73,8 +73,8 @@ async function verifyEntry(instance, guildId) {
 	return new Promise(resolve => {
 		instance.find({ guildId: guildId })
 			.then(queryArr => {
-				console.log('Is the goddamn array empty or what the actual fuck');
-				console.log(queryArr);
+				//console.log('Is the goddamn array empty or what the actual fuck');
+				//console.log(queryArr);
 				if (queryArr.length === 0) {
 					instance.create({ guildId: guildId })
 						.then(doc => {
@@ -107,16 +107,16 @@ serverConfigSchema.statics.checkServerRolesAccessByGuildId = function (guildId, 
 			.then(entry => {
 				const openRoles = [];
 				if (!entry) resolve(openRoles);
-				console.log('v============Roles are not here why?============v');
-				console.log(entry.memberRoles.selfAssign);
-				console.log('=================================================');
-				console.log(entry.memberRoles.selfAssign.any);
-				console.log('=================================================');
-				console.log(entry.memberRoles.selfAssign.specific.map(el => el.roleId));
+				//console.log('v============Roles are not here why?============v');
+				//console.log(entry.memberRoles.selfAssign);
+				//console.log('=================================================');
+				//console.log(entry.memberRoles.selfAssign.any);
+				//console.log('=================================================');
+				//console.log(entry.memberRoles.selfAssign.specific.map(el => el.roleId));
 				if (entry.memberRoles.selfAssign.any.length > 0) openRoles.push('any');
 				openRoles.concat(entry.memberRoles.selfAssign.specific.map(el => el.roleId));
 				resolve(openRoles);
-				console.log('^============Roles are not here why?============^');
+				//console.log('^============Roles are not here why?============^');
 			});
 	});*/
 	return this.findOne({ guildId: guildId });
@@ -127,28 +127,28 @@ serverConfigSchema.statics.updateAccessibleRolesByGuildId = function (guildId, r
 	/* return new Promise(resolve => {
 		verifyEntry(this, guildId)
 			.then(entry => {
-				console.log('End my suffering');
-				console.log(roles);
+				//console.log('End my suffering');
+				//console.log(roles);
 				// entry.memberRoles.selfAssign = roles;
 				/* entry.save()
 					.then(updatedEntry => {
-						console.log('Updated ServerConfig');
-						console.log(updatedEntry);
+						//console.log('Updated ServerConfig');
+						//console.log(updatedEntry);
 						resolve(updatedEntry, cb);
 					});*/
 	/* const query = this.updateOne({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } });
-				console.log(query);
-				console.log(query.get('memberRoles.selfAssign'));
+				//console.log(query);
+				//console.log(query.get('memberRoles.selfAssign'));
 				resolve();
 			});
 	});*/
 	/*this.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } }, { upsert: true, new: true }, (err, updateDoc) => {
-		console.log('I am really starting to get depressed over a fucking Mango?');
+		//console.log('I am really starting to get depressed over a fucking Mango?');
 		if (err) console.error(err);
-		console.log(updateDoc);
-		console.log(updateDoc.memberRoles.selfAssign.any);
-		console.log(updateDoc.memberRoles.selfAssign.specific);
-		console.log('Christ almighty...');
+		//console.log(updateDoc);
+		//console.log(updateDoc.memberRoles.selfAssign.any);
+		//console.log(updateDoc.memberRoles.selfAssign.specific);
+		//console.log('Christ almighty...');
 	});*/
 
 	return this.findOneAndUpdate({ guildId: guildId }, { $set: { 'memberRoles.selfAssign': roles } }, { upsert: true, new: true });

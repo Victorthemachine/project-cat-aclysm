@@ -24,12 +24,7 @@ const routes = [
         component: (
             <AuthorizedRoute>
                 <Dashboard>
-                    <AppBar>
-                        <Paper>
-                            <Button variant="contained">I am an experiment</Button>
-                            <Typography>Me too!</Typography>
-                        </Paper>
-                    </AppBar>
+                    <AppBar />
                 </Dashboard>
             </AuthorizedRoute>
         )

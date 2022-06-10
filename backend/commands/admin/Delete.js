@@ -13,10 +13,10 @@ module.exports = class extends Command {
 	}
 
 	async run(message, args) {
-		console.log(args[0]);
+		//console.log(args[0]);
 		const amount = parseInt(args[0], 10);
 		let actualAmount = amount;
-		console.log(`amount: ${amount}`);
+		//console.log(`amount: ${amount}`);
 		if (!Number.isInteger(amount)) {
 			message.reply('Please enter a valid number of messages you want me to delete >~<!');
 			return;
@@ -27,17 +27,17 @@ module.exports = class extends Command {
 		}
 		this.client.utils.fetchMessages(message.guild, { channel: message.channel, amount: amount })
 			.then(collection => {
-				console.log(`The wonderfull output: ${collection.values().lenght}`);
+				//console.log(`The wonderfull output: ${collection.values().lenght}`);
 				const deletionArray = collection.filter(a => !this.client.utils.isOlder(a)).map(b => b);
 				let leftToGoThrough = deletionArray.length;
 				actualAmount = deletionArray.length;
-				console.log(leftToGoThrough);
+				//console.log(leftToGoThrough);
 				if (leftToGoThrough >= 100) {
 					while (leftToGoThrough > 0) {
 						let temp = leftToGoThrough;
 						temp > 100 ? temp = 100 : temp = temp;
 						leftToGoThrough > 100 ? leftToGoThrough -= 100 : leftToGoThrough = 0;
-						console.log(deletionArray.slice(0, 99).length);
+						//console.log(deletionArray.slice(0, 99).length);
 						message.channel.bulkDelete(deletionArray.slice(0, 99));
 						deletionArray.splice(0, 100);
 					}

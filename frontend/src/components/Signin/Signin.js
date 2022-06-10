@@ -2,7 +2,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
-import { Button, Typography, TextField, IconButton, Alert, AlertTitle, Collapse, Tooltip } from '@mui/material';
+import { Button, Typography, TextField, IconButton, Alert, AlertTitle, Collapse, Tooltip, Paper } from '@mui/material';
 import { VisibilityOff, Visibility, Close as CloseIcon } from '@mui/icons-material';
 import axios from 'axios';
 
@@ -43,13 +43,13 @@ const Signin = () => {
     //TODO: Currently PIN length is set to 10 but that is subject to change
     //TODO: Make the redirect match the bot ID
     return (
-        <div
+        <Paper
             style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: `100%`,
+                minHeight: `100vh`,
             }}
         >
             <Collapse in={open}>
@@ -72,69 +72,79 @@ const Signin = () => {
                     Check the PIN you received in Discord - <strong>only Nya Bot#8111 can give out PINs!</strong>
                 </Alert>
             </Collapse>
-            <Typography component="h1" variant="h5">
-                {intl.formatMessage({ id: 'sign_in' })}
-            </Typography>
-            <Typography variant="body1">
-                {intl.formatMessage({ id: 'sign_in_context' })}
-            </Typography>
-            <form
-                style={{ marginTop: 1 }}
-                onSubmit={handleSubmit}
-                noValidate
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        allignItems: "center"
-                    }}
-                >
-                    <TextField
-                        value={entryPin}
-                        onInput={(e) => setEntryPin(e.target.value)}
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        error={entryPin.length !== 10 && entryPin.length !== 0}
-                        helperText={entryPin.length !== 10 && entryPin.length !== 0 ? intl.formatMessage({ id: 'invalid_entry_pin' }) : ''}
-                        name="entryPin"
-                        label={intl.formatMessage({ id: 'entry_pin' })}
-                        type={showPin === true ? "text" : "password"}
-                        id="entryPin"
-                        autoComplete="off"
-                    />
-                    <IconButton
-                        children={showPin === true ? <VisibilityOff /> : <Visibility />}
-                        onClick={handleClickShowPin}
-                    />
-                </div>
-                <Tooltip open={entryPin.length !== 10 && entryPin.length !== 0 ? true : false} title={intl.formatMessage({ id: 'invalid_entry_pin' })}>
-                    <span>
+            <Paper sx={{ bgcolor: theme => theme.palette.background.default, width: 1 / 4, height: '50vh' }}>
+                <div style={{ marginLeft: '25%', width: '50%', height: '100%', display: 'flex', justifyContent: 'center', alignContent: 'center', flexDirection: 'column' }}>
+                    <Typography align="center" component="h1" variant="h3">
+                        {intl.formatMessage({ id: 'sign_in' })}
+                    </Typography>
+                    <br/>
+                    <br/>
+                    <Typography align="justify" variant="body1">
+                        {intl.formatMessage({ id: 'sign_in_context' })}
+                    </Typography>
+                    <br/>
+                    <form
+                        style={{ marginTop: 1 }}
+                        onSubmit={handleSubmit}
+                        noValidate
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                allignItems: "center"
+                            }}
+                        >
+                            <TextField
+                                value={entryPin}
+                                onInput={(e) => setEntryPin(e.target.value)}
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                error={entryPin.length !== 10 && entryPin.length !== 0}
+                                helperText={entryPin.length !== 10 && entryPin.length !== 0 ? intl.formatMessage({ id: 'invalid_entry_pin' }) : ''}
+                                name="entryPin"
+                                label={intl.formatMessage({ id: 'entry_pin' })}
+                                type={showPin === true ? "text" : "password"}
+                                id="entryPin"
+                                autoComplete="off"
+                            />
+                            <IconButton
+                                children={showPin === true ? <VisibilityOff /> : <Visibility />}
+                                onClick={handleClickShowPin}
+                                sx={{ color: theme => theme.palette.primary.contrastText }}
+                            />
+                        </div>
+                        <br/>
+                        <Tooltip open={entryPin.length !== 10 && entryPin.length !== 0 ? true : false} title={intl.formatMessage({ id: 'invalid_entry_pin' })}>
+                            <span>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    style={{ marginTop: 2 }}
+                                    disabled={entryPin.length !== 10 && entryPin.length !== 0 ? true : false}
+                                >
+                                    {intl.formatMessage({ id: 'submit_pin' })}
+                                </Button>
+                            </span>
+                        </Tooltip>
+                        <br/>
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             color="primary"
                             style={{ marginTop: 2 }}
-                            disabled={entryPin.length !== 10 && entryPin.length !== 0 ? true : false}
+                            component="a"
+                            href="discord://discord.com/channels/@me/878465860421976134"
                         >
-                            {intl.formatMessage({ id: 'submit_pin' })}
+                            {intl.formatMessage({ id: 'to_discord' })}
                         </Button>
-                    </span>
-                </Tooltip>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    style={{ marginTop: 2 }}
-                    component="a"
-                    href="discord://discord.com/channels/@me/878465860421976134"
-                >
-                    {intl.formatMessage({ id: 'to_discord' })}
-                </Button>
-            </form>
-        </div>
+                    </form>
+                </div>
+            </Paper>
+        </Paper>
     )
 }
 

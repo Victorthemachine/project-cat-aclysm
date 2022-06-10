@@ -17,7 +17,6 @@ module.exports = class extends Event {
 	}
 	statusInterval(timeout) {
 		setTimeout(() => {
-			console.log(new Date());
 			this.client.user.setActivity(`${this.client.prefix}help | ${activities[Math.floor(Math.random() * activities.length)]}`,
 				{ type: 'PLAYING' });
 			this.statusInterval(300000);
@@ -28,6 +27,7 @@ module.exports = class extends Event {
 		console.log([
 			`Logged in as ${this.client.user.tag}`,
 			`Loaded ${this.client.commands.size} commands!`,
+			`Loaded ${this.client.slashCommands.size} slash interactions!`,
 			`Loaded ${this.client.events.size} events!`
 		].join('\n'));
 		this.statusInterval();

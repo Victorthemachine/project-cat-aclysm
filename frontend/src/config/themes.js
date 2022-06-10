@@ -8,13 +8,15 @@ const themes = {
                 type: 'light',
                 primary: {
                     main: '#7a55c7',
+                    light: '#7999d3',
                     contrastText: '#f0efec'
                 },
                 secondary: {
                     main: '#8a8da1',
+                    contrastText: '#121212'                    
                 },
                 background: {
-                    default: '#f0efec',
+                    default: '#fcfcfc',
                     paper: '#f0efec',
                 },
                 text: {
@@ -34,8 +36,8 @@ const themes = {
                     main: '#7999d3',
                 },
                 background: {
-                    default: '#121212',
-                    paper: '#121212',
+                    default: '#404040',
+                    paper: '#282828',
                 },
                 text: {
                     primary: '#fff',
@@ -48,7 +50,7 @@ const themes = {
 
 export const ThemeContext = React.createContext({
     id: 'default',
-    isDarkMode: false,
+    isDarkMode: true,
     toggleTheme: () => {},
     toggleDarkMode: () => {}
 });

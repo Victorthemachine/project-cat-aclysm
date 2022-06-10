@@ -31,7 +31,7 @@ module.exports = class ServerUtils {
 		this.publicKey = publicKey;
 		this.privateKey = privateKey;
 		try {
-			//Client.collection.drop();
+			// Client.collection.drop();
 		} catch (err) {
 			logger.warn('Client collection is already empty');
 		}
@@ -130,11 +130,11 @@ module.exports = class ServerUtils {
 	 * @returns {string} token
 	 */
 	async encryptJWT(data) {
-		console.log('attempting to encrypt ', data);
+		// console.log('attempting to encrypt ', data);
 		if (data !== Object(data)) {
 			data = { data: data };
 		}
-		console.log(data);
+		// console.log(data);
 		return new Promise(resolve => {
 			jwt.sign(data.toJSON(), this.privateKey, { algorithm: 'RS256', expiresIn: '12h' }, (err, token) => {
 				if (err) {

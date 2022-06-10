@@ -51,29 +51,29 @@ module.exports = class extends SlashCommand {
 				} else {
 					muteRole = interaction.guild.roles.cache.get(serverConfigDoc.admin.muteRole);
 				}
-				console.log('Broski let me fucking sleep');
-				console.log(muteRole);
+				//console.log('Broski let me fucking sleep');
+				//console.log(muteRole);
 				if (muteMember.roles.cache.has(muteRole.id) === false) {
 					Member.updateRoleForGuildId(muteMember.id, interaction.guildId, muteMember.roles.cache.map(el => el.id), (newDoc) => {
-						console.log('========Here we go========');
-						console.log(newDoc);
+						//console.log('========Here we go========');
+						//console.log(newDoc);
 						muteMember.roles.set([muteRole.id])
 							.then(newMember => {
 								// TODO: add file to remember that it's supposed to unmute
                                 const timeoutInMilis = args.timeout ? milis.isTimeUnit(args.unit) ? milis.toMilis(args.timeout, args.unit) : milis.toMilis(args.timeout, 'hour') : 0;
-                                console.log(timeoutInMilis);
+                                //console.log(timeoutInMilis);
 								if (timeoutInMilis !== 0) {
 									// FIXME: this seems sketchy at best, deal with this some other way
 									// eslint-disable-next-line func-names
                                     setTimeout(function () {
-                                        console.log('It\'s about time');
+                                        //console.log('It\'s about time');
 										const guild = this.client.guilds.cache.get(interaction.guildId);
 										if (guild) {
 											const member = guild.members.cache.get(newMember.id);
 											if (member) {
 												member.roles.set(newDoc.roles.find(el => el.guildId).roles.filter(el => guild.roles.cache.has(el) === true))
 													.then(itDoes => {
-														console.log('It\'s finally over');
+														//console.log('It\'s finally over');
 													});
 											}
 										}
@@ -91,7 +91,7 @@ module.exports = class extends SlashCommand {
 						.then(newDoc => {
 							muteMember.roles.set(newDoc.roles.find(el => el.guildId === interaction.guildId).roles.filter(el => interaction.guild.roles.cache.has(el) === true))
 								.then(newMember => {
-									console.log('FUCK MY LIFE');
+									//console.log('FUCK MY LIFE');
 									return interaction.editReply(`Unmuted ${newMember.displayName}`);
 								});
 						});

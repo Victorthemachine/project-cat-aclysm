@@ -40,7 +40,7 @@ clientSchema.statics.resetAuthByUserId = function (id, cb) {
 	return new Promise(resolve => {
 		this.find({ 'discord.userId': id })
 			.then(queryArr => {
-				console.log(queryArr);
+				//console.log(queryArr);
 				if (queryArr.length === 0) {
 					resolve(this.create({ discord: { userId: id }, auth: { url: '', pin: '' } }));
 				} else {
@@ -66,7 +66,7 @@ clientSchema.statics.setAuthByUserId = function (id, authOpts, cb) {
 	return new Promise(resolve => {
 		this.find({ 'discord.userId': id })
 			.then(queryArr => {
-				console.log(queryArr);
+				//console.log(queryArr);
 				if (queryArr.length === 0) {
 					resolve(this.create({ discord: { userId: id }, auth: { url: authOpts.url, pin: authOpts.pin, createdAt: Date.now() } }));
 				} else {

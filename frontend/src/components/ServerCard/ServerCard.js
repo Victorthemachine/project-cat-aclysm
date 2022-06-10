@@ -12,7 +12,7 @@ const UserCard = ({ serverInfo, popAlert, alertType }) => {
 
     const handleInvite = () => {
         // TODO: gotta add invite action here
-        console.log(`Trying to invite ppl to ${serverInfo.name} with ID:${serverInfo.guildId}`);
+        //console.log(`Trying to invite ppl to ${serverInfo.name} with ID:${serverInfo.guildId}`);
         axios.post('http://localhost:8080/info/invite', {
             guildId: serverInfo.guildId
         }, {
@@ -39,7 +39,7 @@ const UserCard = ({ serverInfo, popAlert, alertType }) => {
     }
 
     return (
-        <Card variant="outlined" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <Card variant="outlined" sx={{ bgcolor: (theme) => theme.palette.background.default, flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <CardHeader
                 avatar={
                     <Avatar src={serverInfo.guildAvatar} aria-label="Guild icon" />
@@ -81,7 +81,7 @@ const UserCard = ({ serverInfo, popAlert, alertType }) => {
                     </Button>
                 </div>
             </CardActions>
-            <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <Card sx={{ bgcolor: (theme) => theme.palette.background.default, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography>
                     {intl.formatMessage({ id: 'owner' })}
                 </Typography>

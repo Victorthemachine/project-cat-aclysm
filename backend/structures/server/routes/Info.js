@@ -40,13 +40,13 @@ module.exports = class extends BotRoute {
     fetchUserGuilds(req, res, next) {
         this.#infoRouteMiddleWare(req)
             .then(token => {
-                console.log('============User guild route============')
-                console.log(token);
+                //console.log('============User guild route============')
+                //console.log(token);
                 if (Object.keys(token).length === 0) return res.send({});
                 this.client.utils.fetchUserGuilds(token.userId)
                     .then(data => {
                         res.send(data);
-                        console.log('========================================')
+                        //console.log('========================================')
                     });
             })
 
@@ -55,14 +55,14 @@ module.exports = class extends BotRoute {
     fetchInvite(req, res, next) {
         this.#infoRouteMiddleWare(req)
             .then(token => {
-                console.log('============User invite route============')
-                console.log(token);
+                //console.log('============User invite route============')
+                //console.log(token);
                 if (Object.keys(token).length === 0) return res.send({});
                 if (!req.body.guildId) return res.send({});
                 this.client.utils.fetchGuildInvite(token.userId, req.body.guildId)
                     .then(data => {
                         res.send(data);
-                        console.log('=========================================')
+                        //console.log('=========================================')
                     });
             })
     }
