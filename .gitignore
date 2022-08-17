@@ -1,8 +1,7 @@
+#.pnp.*
+# Created by https://www.toptal.com/developers/gitignore/api/node,react,yarn
+# Edit at https://www.toptal.com/developers/gitignore?templates=node,react,yarn
 
-# Created by https://www.toptal.com/developers/gitignore/api/node,react
-# Edit at https://www.toptal.com/developers/gitignore?templates=node,react
-
-/backend/configuration/
 ### Node ###
 # Logs
 logs
@@ -60,6 +59,9 @@ web_modules/
 # Optional eslint cache
 .eslintcache
 
+# Optional stylelint cache
+.stylelintcache
+
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
@@ -75,10 +77,12 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment variable files
 .env
-.env.test
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -101,6 +105,12 @@ dist
 # vuepress build output
 .vuepress/dist
 
+# vuepress v2.x temp and cache directory
+.temp
+
+# Docusaurus cache and generated files
+.docusaurus
+
 # Serverless directories
 .serverless/
 
@@ -116,16 +126,14 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# additional yarn per recommendations: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-.yarn/*
-.yarn/cache
-.yarn/patches
-.yarn/plugins
-.yarn/releases
-.yarn/sdks
-.yarn/versions
+### Node Patch ###
+# Serverless Webpack directories
+.webpack/
 
-.yarnrc.yml
+# Optional stylelint cache
+
+# SvelteKit build / generate output
+.svelte-kit
 
 ### react ###
 .DS_*
@@ -140,4 +148,12 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/node,react
+### yarn ###
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+
+.yarn
+
+# and uncomment the following lines
+# .pnp.*
+
+# End of https://www.toptal.com/developers/gitignore/api/node,react,yarn
