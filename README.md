@@ -1,5 +1,5 @@
 # project-cat-aclysm (Roombacat is my alt account)
-**Currently work in progress, updates coming soon.**
+**JavaScript version working, TypeScript rebuild currently work in progress**
 
 Hello and welcome to my little repository.
 
